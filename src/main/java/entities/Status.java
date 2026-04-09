@@ -1,0 +1,46 @@
+package entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.Set;
+
+@Entity
+@Table(name = "status")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Status {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "status_id")
+    private Integer statusId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "color", nullable = false, length = 7)
+    private String color;
+
+    @Column(name = "\"order\"", nullable = false)
+    private Integer order;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Task> tasks;
+}
+

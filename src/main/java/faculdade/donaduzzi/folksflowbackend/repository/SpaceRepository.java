@@ -13,8 +13,7 @@ public interface SpaceRepository extends BaseRepository<Space, Integer>{
 
     @Query("SELECT DISTINCT s FROM Space s " +
             "LEFT JOIN s.members m " +
-            "WHERE (s.creator.userId = :userId " +
-            "OR m.user.userId = :userId) " +
+            "WHERE m.user.userId = :userId " +
             "AND s.isActive = true " +
             "ORDER BY s.createdAt DESC")
     List<Space> findAllSpacesByUserId(@Param("userId") Integer userId);

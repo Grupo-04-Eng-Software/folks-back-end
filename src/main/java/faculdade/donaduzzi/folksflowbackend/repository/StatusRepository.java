@@ -15,4 +15,6 @@ public interface StatusRepository extends BaseRepository<Status, Integer>{
             "WHERE s.project.projectId = :projectId " +
             "ORDER BY s.position")
     List<Status> findByProject(@Param("projectId") Integer projectId);
-}
+
+    }
+

@@ -25,10 +25,6 @@ public class Project {
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
-
     @Column(name = "name", nullable = false, length = 150)
     private String name;
 
@@ -46,9 +42,6 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Status> statuses;
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Task> tasks;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserProject> members;

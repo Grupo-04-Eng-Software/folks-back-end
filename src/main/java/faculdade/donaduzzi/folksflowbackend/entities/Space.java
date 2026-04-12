@@ -21,10 +21,6 @@ public class Space {
     @Column(name = "space_id")
     private Integer spaceId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
-
     @Column(name = "name", nullable = false, length = 150)
     private String name;
 

@@ -28,7 +28,7 @@ public class Status {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "color", nullable = false, length = 7)
+    @Column(name = "color", nullable = false, columnDefinition = "CHAR(7)")
     private String color;
 
     @Column(name = "position", nullable = false)

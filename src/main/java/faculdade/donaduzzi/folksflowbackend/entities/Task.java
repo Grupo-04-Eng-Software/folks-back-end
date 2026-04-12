@@ -37,10 +37,6 @@ public class Task {
     @JoinColumn(name = "priority_id", nullable = false)
     private Priority priority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
-
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 

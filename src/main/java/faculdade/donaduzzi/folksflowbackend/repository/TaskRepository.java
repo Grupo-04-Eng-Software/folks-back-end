@@ -13,14 +13,16 @@ public interface TaskRepository extends BaseRepository<Task, Integer>{
 
     @Query("SELECT DISTINCT t FROM Task t " +
             "LEFT JOIN t.assignees a " +
-            "WHERE a.userId = :userId" +
-            "ORDER BY t.dueDate DESC, t.isFavorite DESC")
+            "WHERE (t.creator.userId = :userId " +
+            "OR a.user.userId = :userId) " +
+            "ORDER BY t.dueDate DESC")
     List<Task> findAllTaskByUser(@Param("userId") Integer userId);
 
     @Query("SELECT DISTINCT t FROM Task t " +
             "LEFT JOIN t.assignees a " +
-            "WHERE a.userId = :userId " +
-            "AND t.isFavorite = true " +
+            "WHERE (t.creator.userId = :userId " +
+            "OR a.user.userId = :userId) " +
+            "AND a.isFavorite = true " +
             "ORDER BY t.dueDate DESC")
     List<Task> findAllFavoritesTaskByUser(@Param("userId") Integer userId);
 }

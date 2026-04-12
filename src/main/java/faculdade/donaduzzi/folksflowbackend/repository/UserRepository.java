@@ -16,4 +16,5 @@ public interface UserRepository extends BaseRepository<User, Integer>{
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.isActive = true")
     Optional<User> findByEmailActive(@Param("email") String email);
 
+
 }

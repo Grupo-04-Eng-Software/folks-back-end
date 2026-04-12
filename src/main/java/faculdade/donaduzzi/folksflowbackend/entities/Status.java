@@ -1,4 +1,4 @@
-package entities;
+package faculdade.donaduzzi.folksflowbackend.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,8 +31,8 @@ public class Status {
     @Column(name = "color", nullable = false, length = 7)
     private String color;
 
-    @Column(name = "\"order\"", nullable = false)
-    private Integer order;
+    @Column(name = "position", nullable = false)
+    private Integer position;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -43,4 +43,3 @@ public class Status {
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Task> tasks;
 }
-

@@ -1,4 +1,4 @@
-package entities;
+package faculdade.donaduzzi.folksflowbackend.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -50,8 +50,8 @@ public class Task {
     @Column(name = "due_date")
     private LocalDate dueDate;
 
-    @Column(name = "\"order\"", nullable = false)
-    private Integer order;
+    @Column(name = "position", nullable = false)
+    private Integer position;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -81,4 +81,3 @@ public class Task {
     )
     private Set<Tag> tags;
 }
-

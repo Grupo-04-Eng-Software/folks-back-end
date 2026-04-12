@@ -1,4 +1,4 @@
-package entities;
+package faculdade.donaduzzi.folksflowbackend.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

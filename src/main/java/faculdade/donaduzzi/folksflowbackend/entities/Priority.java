@@ -1,4 +1,4 @@
-package entities;
+package faculdade.donaduzzi.folksflowbackend.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,10 +23,9 @@ public class Priority {
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(name = "\"order\"", nullable = false)
-    private Integer order;
+    @Column(name = "position", nullable = false)
+    private Integer position;
 
     @OneToMany(mappedBy = "priority", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Task> tasks;
 }
-

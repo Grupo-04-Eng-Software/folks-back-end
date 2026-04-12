@@ -1,4 +1,4 @@
-package entities;
+package faculdade.donaduzzi.folksflowbackend.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,39 +9,32 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Table(name = "candidates")
+@Table(name = "companies")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Candidate {
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "candidate_id")
-    private Integer candidateId;
+    @Column(name = "company_id")
+    private Integer companyId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
-
-    @Column(name = "name", nullable = false, length = 150)
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "email", nullable = false, unique = true, length = 255)
+    @Column(name = "profile_photo", length = 500)
+    private String profilePhoto;
+
+    @Column(name = "email", length = 255)
     private String email;
 
     @Column(name = "phone", length = 30)
     private String phone;
 
-    @Column(name = "profile_photo", length = 500)
-    private String profilePhoto;
-
-    @Column(name = "resume", nullable = false, length = 500)
-    private String resume;
-
-    @Column(name = "linkedin", length = 255)
-    private String linkedin;
+    @Column(name = "website", length = 255)
+    private String website;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -54,8 +47,8 @@ public class Candidate {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "projects_has_candidates",
-        joinColumns = @JoinColumn(name = "candidate_id"),
+        name = "projects_has_companies",
+        joinColumns = @JoinColumn(name = "company_id"),
         inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Set<Project> projects;
@@ -63,9 +56,9 @@ public class Candidate {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "companies_has_candidates",
-        joinColumns = @JoinColumn(name = "candidate_id"),
-        inverseJoinColumns = @JoinColumn(name = "company_id")
+        joinColumns = @JoinColumn(name = "company_id"),
+        inverseJoinColumns = @JoinColumn(name = "candidate_id")
     )
-    private Set<Company> companies;
+    private Set<Candidate> candidates;
 }
 

@@ -65,13 +65,8 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Activity> activities;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "tasks_has_users",
-        joinColumns = @JoinColumn(name = "task_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> assignees;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskUser> assignees;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

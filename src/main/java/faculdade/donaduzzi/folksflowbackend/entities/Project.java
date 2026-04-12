@@ -50,14 +50,8 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Task> tasks;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "users_has_projects",
-        joinColumns = @JoinColumn(name = "project_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-
-    private Set<User> members;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserProject> members;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -75,4 +69,3 @@ public class Project {
     )
     private Set<Company> companies;
 }
-

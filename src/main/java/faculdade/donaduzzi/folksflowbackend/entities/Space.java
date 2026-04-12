@@ -49,12 +49,6 @@ public class Space {
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "users_has_spaces",
-        joinColumns = @JoinColumn(name = "space_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> members;
+    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserSpace> members;
 }
-

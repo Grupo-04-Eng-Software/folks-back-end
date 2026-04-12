@@ -61,28 +61,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Activity> activities;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "users_has_spaces",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "space_id")
-    )
-    private Set<Space> spaces;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserSpace> spaces;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "users_has_projects",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    private Set<Project> projects;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserProject> projects;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "tasks_has_users",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "task_id")
-    )
-    private Set<Task> assignedTasks;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskUser> assignedTasks;
 }
-

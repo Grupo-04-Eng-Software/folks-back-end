@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
-import faculdade.donaduzzi.folksflowbackend.entities.Status;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 
 @Repository
 public interface StatusRepository extends BaseRepository<Status, Integer>{

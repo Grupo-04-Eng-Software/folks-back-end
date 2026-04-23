@@ -5,7 +5,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
-import faculdade.donaduzzi.folksflowbackend.entities.User;
+import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 
 @Repository
 public interface UserRepository extends BaseRepository<User, Integer>{

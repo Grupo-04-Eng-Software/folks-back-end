@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
-import faculdade.donaduzzi.folksflowbackend.entities.Task;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
 
 @Repository
 public interface TaskRepository extends BaseRepository<Task, Integer>{

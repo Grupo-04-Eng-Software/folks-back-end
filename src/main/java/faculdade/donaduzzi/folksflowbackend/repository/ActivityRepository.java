@@ -11,7 +11,7 @@ import java.util.List;
 public interface ActivityRepository extends BaseRepository<Activity, Integer> {
 
 
-    List<Activity> findActivitiesByTasktask_id(Integer taskTaskId);
+    List<Activity> findByTaskTaskId(Integer taskId);
 
 
 }

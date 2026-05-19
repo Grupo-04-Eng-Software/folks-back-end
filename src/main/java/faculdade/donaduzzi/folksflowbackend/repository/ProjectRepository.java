@@ -9,19 +9,19 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends BaseRepository<Project, Integer> {
-    @Query("SELECT p FROM Project" +
+    /*@Query("SELECT p FROM Project" +
             "JOIN UserProject up" +
             "WHERE p.projectId = up.projectId" +
             "JOIN user u" +
             "WHERE up.userId = u.userId" +
             "ORDER BY p.createdAt DESC"
-    )
-    List<Project> findAllProjectsByUserId(@Param("userId")Integer userId);
+    )*/
+    List<Project> findAllProjectsByUserId(Integer userId);
 
-    @Query(
+    /*@Query(
             "SELECT p FROM Project" +
                     "JOIN UserSpace us" +
                     "WHERE p.spaceId = us.spaceId"
-    )
-    List<Project> findAllProjectsBySpaceId(@Param("spaceId")Integer spaceId);
+    )*/
+    List<Project> findAllProjectsBySpaceId(Integer spaceId);
 }

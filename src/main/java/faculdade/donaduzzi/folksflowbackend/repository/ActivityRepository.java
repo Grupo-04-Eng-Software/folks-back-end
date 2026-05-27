@@ -1,17 +1,11 @@
 package faculdade.donaduzzi.folksflowbackend.repository;
 
-
-import org.springframework.stereotype.Repository;
-
 import faculdade.donaduzzi.folksflowbackend.model.entities.Activity;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface ActivityRepository extends BaseRepository<Activity, Integer> {
-
-
-    List<Activity> findByTaskTaskId(Integer taskId);
-
-
+    List<Activity> findByTaskTaskIdOrderByCreatedAtDesc(Integer taskId);
 }

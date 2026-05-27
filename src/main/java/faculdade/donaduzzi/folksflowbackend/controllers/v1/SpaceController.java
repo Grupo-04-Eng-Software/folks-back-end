@@ -1,0 +1,39 @@
+package faculdade.donaduzzi.folksflowbackend.controllers.v1;
+
+import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceRequest;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceResponse;
+import faculdade.donaduzzi.folksflowbackend.model.entities.User;
+import faculdade.donaduzzi.folksflowbackend.services.SpaceService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/spaces")
+@RequiredArgsConstructor
+public class SpaceController {
+
+    private final SpaceService spaceService;
+
+    @GetMapping
+    public ResponseEntity<List<SpaceResponse>> getAllSpaces(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(spaceService.findAllByUser(user));
+    }
+
+    @PostMapping
+    public ResponseEntity<SpaceResponse> createSpace(@RequestBody @Valid SpaceRequest request, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(spaceService.create(request, user));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteSpace(@PathVariable Integer id) {
+        spaceService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

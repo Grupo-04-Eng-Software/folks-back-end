@@ -1,5 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.model.entities;
 
+import faculdade.donaduzzi.folksflowbackend.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,8 +38,9 @@ public class User {
     @Column(name = "profile_photo", length = 500)
     private String profilePhoto;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
-    private String role;
+    private UserRole role;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;

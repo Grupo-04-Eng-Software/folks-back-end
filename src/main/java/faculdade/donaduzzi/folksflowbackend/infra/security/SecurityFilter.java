@@ -1,6 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.infra.security;
 
-import faculdade.donaduzzi.folksflowbackend.entities.User;
+import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 @Component
@@ -33,15 +32,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (login != null) {
             User user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User not found"));
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
     }
     private String recoverToken(HttpServletRequest request){
-        var authHeader = request.getHeader("authorization");
+        var authHeader = request.getHeader("Authorization");
         if (authHeader == null) return null;
-        return authHeader.replace("Bearer", " ");
+        return authHeader.replace("Bearer ", "");
     }
 }

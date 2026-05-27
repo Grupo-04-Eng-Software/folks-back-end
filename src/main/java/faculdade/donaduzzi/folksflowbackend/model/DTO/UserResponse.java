@@ -34,7 +34,7 @@ public class UserResponse {
             .name(user.getName())
             .email(user.getEmail())
             .profilePhoto(user.getProfilePhoto())
-            .role(user.getRole())
+            .role(user.getRole().name())
             .isActive(user.getIsActive())
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())

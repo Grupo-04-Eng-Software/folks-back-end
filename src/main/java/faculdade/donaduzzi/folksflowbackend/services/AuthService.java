@@ -4,6 +4,7 @@ import faculdade.donaduzzi.folksflowbackend.infra.security.TokenService;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginRequestDTO;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginResponseDTO;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.RegisterRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.RefreshToken;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.enums.UserRole;

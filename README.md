@@ -33,93 +33,115 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 
 ---
 
-## 📡 Notificações em Tempo Real (WebSocket)
+## 📑 Referência Completa da API (v1)
 
-As notificações são entregues via protocolo **STOMP** sobre WebSocket.
+### 🔑 Autenticação (`/api/v1/auth`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/me` | Obtém o perfil do usuário logado |
+| `POST` | `/login` | Autenticação inicial e retorno de tokens |
+| `POST` | `/register` | Cadastro de novo usuário |
+| `POST` | `/refresh` | Renovação de Access Token via Refresh Token |
 
-*   **Endpoint de Conexão:** `ws://localhost:8080/ws-folks`
-*   **Tópico de Notificações do Usuário:** `/user/{email}/queue/notifications`
-*   **Eventos:** Atribuição de tarefas, convites para espaços/projetos e novos comentários.
+### 📂 Espaços (`/api/v1/spaces`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Lista espaços do usuário logado |
+| `POST` | `/` | Cria um novo espaço |
+| `DELETE` | `/{id}` | Exclui um espaço (Requer ROLE_ADMIN) |
+
+### 🏗️ Projetos (`/api/v1/projects`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/space/{spaceId}` | Lista projetos vinculados a um espaço |
+| `POST` | `/` | Cria um projeto dentro de um espaço |
+| `DELETE` | `/{id}` | Exclui um projeto (Requer ROLE_ADMIN) |
+
+### 📊 Kanban & Status (`/api/v1/status`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/project/{projectId}` | Lista colunas (Status) de um projeto |
+| `POST` | `/` | Cria uma nova coluna no Kanban |
+| `DELETE` | `/{id}` | Exclui uma coluna |
+
+### 📋 Tarefas (`/api/v1/tasks`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Pesquisa global de tarefas (Filtros e Paginação) |
+| `GET` | `/status/{statusId}` | Lista tarefas de uma coluna específica |
+| `GET` | `/overdue` | Lista tarefas com prazo vencido |
+| `POST` | `/` | Cria uma nova tarefa |
+| `PATCH` | `/{id}/move` | Move tarefa entre colunas ou muda posição |
+| `POST` | `/{id}/assign/{userId}` | Atribui um usuário à tarefa |
+| `DELETE` | `/{id}/unassign/{userId}` | Remove a atribuição de um usuário |
+| `DELETE` | `/{id}` | Exclui uma tarefa (Soft Delete) |
+| `POST` | `/{id}/checklist` | Adiciona item ao checklist da tarefa |
+| `PATCH` | `/checklist/{itemId}/toggle` | Marca/Desmarca item do checklist |
+| `POST` | `/{id}/time/start` | Inicia cronômetro de tempo gasto |
+| `POST` | `/{id}/time/stop` | Para cronômetro e registra duração |
+| `GET` | `/{id}/time/total` | Obtém soma total de tempo gasto na tarefa |
+
+### 🏢 RH: Candidatos (`/api/v1/candidates`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Pesquisa/Lista global de candidatos (Paginado) |
+| `POST` | `/{id}/associate-company/{cid}` | Vincula candidato a uma empresa |
+| `POST` | `/{id}/resume` | Upload de currículo (Multipart/Form-Data) |
+| `GET` | `/{id}/resume/download` | Download do arquivo de currículo |
+| `DELETE` | `/{id}` | Exclui candidato (Soft Delete) |
+
+### 🏭 RH: Empresas (`/api/v1/companies`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Lista todas as empresas clientes |
+| `GET` | `/{id}` | Obtém detalhes de uma empresa específica |
+| `GET` | `/{id}/candidates` | Lista candidatos vinculados à empresa |
+| `DELETE` | `/{id}` | Exclui empresa (Soft Delete) |
+
+### 💬 Comentários & Atividades (`/api/v1/activities`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/task/{taskId}` | Lista timeline de atividades/comentários |
+| `POST` | `/` | Adiciona um comentário a uma tarefa |
+
+### 🏷️ Etiquetas (`/api/v1/tags`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/space/{spaceId}` | Lista etiquetas disponíveis no espaço |
+| `POST` | `/` | Cria uma nova etiqueta |
+| `POST` | `/task/{taskId}/associate/{tagId}` | Vincula etiqueta a uma tarefa |
+
+### 🔔 Notificações (`/api/v1/notifications`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Lista notificações do usuário logado |
+| `GET` | `/unread/count` | Obtém total de notificações não lidas |
+| `PATCH` | `/{id}/read` | Marca notificação como lida |
+
+### ⚙️ Configurações e Auxiliares
+| Entidade | Método | Rota | Descrição |
+| :--- | :--- | :--- | :--- |
+| **Prioridades** | `GET` | `/api/v1/priorities` | Lista níveis de prioridade |
+| **Prioridades** | `POST` | `/api/v1/priorities` | Cria novo nível de prioridade |
+| **Endereços** | `POST` | `/api/v1/addresses` | Cadastro manual de endereço |
 
 ---
-
-## 📑 Referência da API (v1)
-
-### 🛠️ Configuração Inicial (Auto-Seed)
-O sistema possui um seeder automático que popula o banco de dados na primeira execução.
-
-**Credenciais de Acesso Padrão:**
-*   **Email:** `admin@folks.com`
-*   **Senha:** `admin123`
-
-*(As prioridades e um endereço inicial também são criados automaticamente).*
-
-### 🔑 Autenticação (Auth)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/register` | Cadastro de novo usuário |
-| `POST` | `/api/v1/auth/login` | Login inicial e retorno de tokens |
-| `POST` | `/api/v1/auth/refresh` | Renovação de Access Token via Refresh Token |
-
-### 📂 Espaços (Spaces)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/spaces` | Lista espaços do usuário logado |
-| `POST` | `/api/v1/spaces` | Cria novo espaço |
-| `DELETE` | `/api/v1/spaces/{id}` | Exclui espaço (ADMIN) |
-
-### 🏗️ Projetos (Projects)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/projects/space/{spaceId}` | Lista projetos de um espaço |
-| `POST` | `/api/v1/projects` | Cria projeto dentro de um espaço |
-| `DELETE` | `/api/v1/projects/{id}` | Exclui projeto (ADMIN) |
-
-### 📋 Kanban (Status & Tasks)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/status/project/{projectId}` | Lista colunas (Status) do projeto |
-| `POST` | `/api/v1/status` | Cria nova coluna no Kanban |
-| `GET` | `/api/v1/tasks/status/{statusId}` | Lista tarefas de uma coluna |
-| `POST` | `/api/v1/tasks` | Cria nova tarefa |
-| `PATCH` | `/api/v1/tasks/{id}/move` | Move tarefa entre colunas ou muda posição |
-
-### 💬 Colaboração (Activities & Tags)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/activities/task/{taskId}` | Histórico de comentários da tarefa |
-| `POST` | `/api/v1/activities` | Adiciona comentário a uma tarefa |
-| `GET` | `/api/v1/tags/space/{spaceId}` | Lista etiquetas disponíveis no espaço |
-| `POST` | `/api/v1/tags` | Cria nova etiqueta |
-| `POST` | `/api/v1/tags/task/{taskId}/associate/{tagId}` | Vincula etiqueta à tarefa |
-
-### 🏢 RH (Companies & Candidates)
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/companies` | Lista todas as empresas clientes |
-| `GET` | `/api/v1/companies/{id}/candidates` | Candidatos vinculados à empresa |
-| `GET` | `/api/v1/candidates` | Lista/Pesquisa global de candidatos (Paginado) |
-| `POST` | `/api/v1/candidates/{id}/associate-company/{cid}` | Vincula candidato à empresa |
-| `POST` | `/api/v1/candidates/{id}/resume` | Upload de currículo (Multipart) |
-| `GET` | `/api/v1/candidates/{id}/resume/download` | Download do currículo |
 
 ### 🚀 Produtividade e Auditoria
 | Funcionalidade | Descrição |
 | :--- | :--- |
-| **Soft Delete** | Entidades principais (`Task`, `Project`, `Candidate`) usam `is_active=false` em vez de deleção física. |
-| **AuditLog** | Toda criação, edição ou remoção em Services é registrada automaticamente no banco com o autor da ação. |
-| **Time Tracking** | Controle de play/pause em tarefas com cálculo automático de duração. |
-| **Checklists** | Itens de verificação dentro de cada tarefa. |
-| **Filtros Avançados** | Busca dinâmica por tags, prioridade e status em `/api/v1/tasks` e `/api/v1/candidates`. |
+| **Soft Delete** | Entidades principais (`Task`, `Project`, `Candidate`, `Company`, `Space`, `User`) usam exclusão lógica via campo `is_active`. |
+| **AuditLog** | Toda criação, edição ou remoção em Services é registrada automaticamente no banco via AOP (Aspect-Oriented Programming). |
+| **Filtros Avançados** | Busca dinâmica poderosa usando Spring Data Specifications para tarefas e candidatos. |
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 *   **Java 21** & **Spring Boot 3.2.5**
-*   **Spring Security** + **Auth0 JWT**
-*   **Spring AOP** (Auditoria Automática)
+*   **Spring Security** + **Auth0 JWT** (Access & Refresh Token)
+*   **Spring AOP** (Auditoria de Ações do Usuário)
 *   **PostgreSQL 16**
-*   **Hibernate/JPA**
+*   **Hibernate 6** (Soft Delete e Auditoria)
 *   **Spring WebSocket (STOMP)**
 *   **JUnit 5** & **MockMvc**
 *   **Docker** & **Docker Compose**

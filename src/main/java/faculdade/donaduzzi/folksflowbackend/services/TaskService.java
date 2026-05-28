@@ -128,6 +128,8 @@ public class TaskService {
     public void delete(Integer id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
-        taskRepository.delete(task);
+        task.setIsActive(false);
+        task.setUpdatedAt(LocalDateTime.now());
+        taskRepository.save(task);
     }
 }

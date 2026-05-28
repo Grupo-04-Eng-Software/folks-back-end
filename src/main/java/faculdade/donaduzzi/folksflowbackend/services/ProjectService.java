@@ -80,6 +80,8 @@ public class ProjectService {
     public void delete(Integer id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        projectRepository.delete(project);
+        project.setIsActive(false);
+        project.setUpdatedAt(LocalDateTime.now());
+        projectRepository.save(project);
     }
 }

@@ -2,10 +2,12 @@ package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
 import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskResponse;
+import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid TaskRequest request) {
-        return ResponseEntity.ok(taskService.create(request));
+    public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid TaskRequest request, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(taskService.create(request, user));
     }
 
     @PatchMapping("/{id}/move")

@@ -6,18 +6,19 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tasks_has_users")
+@Table(name = "user_has_tasks")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class TaskUser {
+public class UserTask {
 
     @EmbeddedId
-    private TaskUserId id;
+    private UserTaskId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false, insertable = false, updatable = false)
@@ -33,13 +34,16 @@ public class TaskUser {
     @Column(name = "is_favorite", nullable = false)
     private Boolean isFavorite;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @Embeddable
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode
-    public static class TaskUserId {
+    public static class UserTaskId {
 
         @Column(name = "task_id")
         private Integer taskId;

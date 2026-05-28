@@ -6,7 +6,9 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Space;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.entities.UserProject;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.repository.ProjectRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.StatusRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final SpaceService spaceService;
     private final UserProjectRepository userProjectRepository;
+    private final StatusRepository statusRepository;
 
     public List<ProjectResponse> findAllBySpace(Integer spaceId) {
         return projectRepository.findBySpaceSpaceId(spaceId)
@@ -52,7 +55,24 @@ public class ProjectService {
         userProject.setRole("OWNER");
         userProjectRepository.save(userProject);
 
+        // Criar Status Padrão
+        createDefaultStatus("Backlog", "#7f8c8d", 0, savedProject);
+        createDefaultStatus("A Fazer", "#3498db", 1, savedProject);
+        createDefaultStatus("Em Andamento", "#f1c40f", 2, savedProject);
+        createDefaultStatus("Concluído", "#2ecc71", 3, savedProject);
+
         return ProjectResponse.fromEntity(savedProject);
+    }
+
+    private void createDefaultStatus(String name, String color, Integer position, Project project) {
+        Status status = new Status();
+        status.setName(name);
+        status.setColor(color);
+        status.setPosition(position);
+        status.setProject(project);
+        status.setCreatedAt(LocalDateTime.now());
+        status.setUpdatedAt(LocalDateTime.now());
+        statusRepository.save(status);
     }
 
     @Transactional

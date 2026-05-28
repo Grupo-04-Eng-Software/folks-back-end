@@ -62,7 +62,7 @@ public class Task {
     private Set<Activity> activities;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TaskUser> assignees;
+    private Set<UserTask> assignees;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

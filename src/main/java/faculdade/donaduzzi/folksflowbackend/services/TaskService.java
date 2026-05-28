@@ -6,8 +6,11 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.Priority;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
+import faculdade.donaduzzi.folksflowbackend.model.entities.UserTask;
 import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.TaskRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.UserTaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +26,10 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final StatusService statusService;
     private final PriorityRepository priorityRepository;
+    private final UserRepository userRepository;
+    private final UserTaskRepository userTaskRepository;
 
     public List<TaskResponse> findAllByStatus(Integer statusId) {
-        Status status = statusService.findById(statusId);
-        // Precisamos de um método no repositório para buscar por status
-        // Por enquanto, vamos filtrar manualmente ou criar o método
         return taskRepository.findAll().stream()
                 .filter(t -> t.getStatus().getStatusId().equals(statusId))
                 .map(TaskResponse::fromEntity)
@@ -35,7 +37,7 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponse create(TaskRequest request) {
+    public TaskResponse create(TaskRequest request, User author) {
         Status status = statusService.findById(request.getStatusId());
         Priority priority = priorityRepository.findById(request.getPriorityId())
                 .orElseThrow(() -> new RuntimeException("Priority not found"));
@@ -51,7 +53,7 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
 
         if (request.getPosition() == null) {
-            task.setPosition(0); // Lógica simples inicial
+            task.setPosition(0);
         } else {
             task.setPosition(request.getPosition());
         }
@@ -62,7 +64,19 @@ public class TaskService {
             task.setParentTask(parent);
         }
 
-        return TaskResponse.fromEntity(taskRepository.save(task));
+        Task savedTask = taskRepository.save(task);
+
+        // Criar relacionamento de REDATOR
+        UserTask userTask = new UserTask();
+        userTask.setId(new UserTask.UserTaskId(savedTask.getTaskId(), author.getUserId()));
+        userTask.setTask(savedTask);
+        userTask.setUser(author);
+        userTask.setRole("REDATOR");
+        userTask.setIsFavorite(false);
+        userTask.setCreatedAt(LocalDateTime.now());
+        userTaskRepository.save(userTask);
+
+        return TaskResponse.fromEntity(savedTask);
     }
 
     @Transactional
@@ -78,9 +92,6 @@ public class TaskService {
         return TaskResponse.fromEntity(taskRepository.save(task));
     }
 
-    private final faculdade.donaduzzi.folksflowbackend.repository.UserRepository userRepository;
-    private final faculdade.donaduzzi.folksflowbackend.repository.TaskUserRepository taskUserRepository;
-
     @Transactional
     public void assignUser(Integer taskId, Integer userId) {
         Task task = taskRepository.findById(taskId)
@@ -88,21 +99,21 @@ public class TaskService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser taskUser = new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser();
-        taskUser.setId(new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId(taskId, userId));
-        taskUser.setTask(task);
-        taskUser.setUser(user);
-        taskUser.setRole("ASSIGNEE");
-        taskUser.setIsFavorite(false);
+        UserTask userTask = new UserTask();
+        userTask.setId(new UserTask.UserTaskId(taskId, userId));
+        userTask.setTask(task);
+        userTask.setUser(user);
+        userTask.setRole("ASSIGNEE");
+        userTask.setIsFavorite(false);
+        userTask.setCreatedAt(LocalDateTime.now());
 
-        taskUserRepository.save(taskUser);
+        userTaskRepository.save(userTask);
     }
 
     @Transactional
     public void unassignUser(Integer taskId, Integer userId) {
-        faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId id = 
-                new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId(taskId, userId);
-        taskUserRepository.deleteById(id);
+        UserTask.UserTaskId id = new UserTask.UserTaskId(taskId, userId);
+        userTaskRepository.deleteById(id);
     }
 
     @Transactional

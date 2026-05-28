@@ -61,7 +61,7 @@ public class User {
     private Set<UserProject> projects;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TaskUser> assignedTasks;
+    private Set<UserTask> assignedTasks;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RefreshToken> refreshTokens;

@@ -23,5 +23,6 @@ public class StatusRequest {
     
     private Integer position;
 
+    @Builder.Default
     private Boolean isFinalStatus = false;
 }

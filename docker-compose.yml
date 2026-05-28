@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: folksflow-db
+    environment:
+      POSTGRES_DB: folksflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: folksflow-app
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: folksflow
+      DB_USER: postgres
+      DB_PASSWORD: root
+      JWT_SECRET: senha-braba-demais-no-docker
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

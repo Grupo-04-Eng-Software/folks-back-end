@@ -16,7 +16,8 @@ O projeto está totalmente containerizado com Docker.
     docker-compose up --build
     ```
 2.  A API estará disponível em: `http://localhost:8080`
-3.  O banco de dados PostgreSQL estará disponível em: `localhost:5432`
+3.  A documentação visual (Swagger) estará em: `http://localhost:8080/swagger-ui.html`
+4.  O banco de dados PostgreSQL estará disponível em: `localhost:5432`
 
 ---
 

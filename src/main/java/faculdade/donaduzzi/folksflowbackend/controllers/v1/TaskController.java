@@ -35,6 +35,18 @@ public class TaskController {
         return ResponseEntity.ok(taskService.moveTask(id, targetStatusId, position));
     }
 
+    @PostMapping("/{id}/assign/{userId}")
+    public ResponseEntity<Void> assignUser(@PathVariable Integer id, @PathVariable Integer userId) {
+        taskService.assignUser(id, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/unassign/{userId}")
+    public ResponseEntity<Void> unassignUser(@PathVariable Integer id, @PathVariable Integer userId) {
+        taskService.unassignUser(id, userId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
         taskService.delete(id);

@@ -24,6 +24,8 @@ public class UserResponse {
     private LocalDateTime updatedAt;
 
 
+    private AddressResponse address;
+
     public static UserResponse fromEntity(User user) {
         if (user == null) {
             return null;
@@ -35,6 +37,7 @@ public class UserResponse {
             .email(user.getEmail())
             .profilePhoto(user.getProfilePhoto())
             .role(user.getRole().name())
+            .address(AddressResponse.fromEntity(user.getAddress()))
             .isActive(user.getIsActive())
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())

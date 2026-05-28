@@ -5,6 +5,7 @@ import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Priority;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
+import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,33 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
 
         return TaskResponse.fromEntity(taskRepository.save(task));
+    }
+
+    private final faculdade.donaduzzi.folksflowbackend.repository.UserRepository userRepository;
+    private final faculdade.donaduzzi.folksflowbackend.repository.TaskUserRepository taskUserRepository;
+
+    @Transactional
+    public void assignUser(Integer taskId, Integer userId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser taskUser = new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser();
+        taskUser.setId(new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId(taskId, userId));
+        taskUser.setTask(task);
+        taskUser.setUser(user);
+        taskUser.setRole("ASSIGNEE");
+        taskUser.setIsFavorite(false);
+
+        taskUserRepository.save(taskUser);
+    }
+
+    @Transactional
+    public void unassignUser(Integer taskId, Integer userId) {
+        faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId id = 
+                new faculdade.donaduzzi.folksflowbackend.model.entities.TaskUser.TaskUserId(taskId, userId);
+        taskUserRepository.deleteById(id);
     }
 
     @Transactional

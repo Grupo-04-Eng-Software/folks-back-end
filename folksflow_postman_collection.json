@@ -1,16 +1,42 @@
 {
 	"info": {
-		"_postman_id": "folksflow-v1-operational",
-		"name": "FolksFlow API v1 - Fluxos Operacionais",
-		"description": "Coleção com fluxos reais de uso do Kanban (Movimentação, Atribuição, Colaboração).",
+		"_postman_id": "folksflow-v1-complete",
+		"name": "FolksFlow API v1 - COMPLETA",
+		"description": "Esta coleção contém TODOS os endpoints do sistema. Organizada para teste do zero ao fluxo real.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "0. Setup & Auth",
+			"name": "1. Setup & Auth",
 			"item": [
 				{
-					"name": "Login Admin",
+					"name": "Create Address",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"street\": \"Rua das Américas\",\n    \"number\": \"500\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"Toledo\",\n    \"state\": \"PR\",\n    \"country\": \"Brasil\",\n    \"zipCode\": \"85900-000\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/addresses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "addresses"] }
+					}
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Novo Usuario\",\n    \"email\": \"user@folks.com\",\n    \"password\": \"user123\",\n    \"addressId\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register"] }
+					}
+				},
+				{
+					"name": "Login",
 					"event": [
 						{
 							"listen": "test",
@@ -36,131 +62,268 @@
 					}
 				},
 				{
-					"name": "Get My Info",
+					"name": "Get My Profile (/me)",
 					"request": {
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"url": { "raw": "{{baseUrl}}/api/v1/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "me"] }
 					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/api/v1/auth/refresh?token={{refreshToken}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "refresh"], "query": [ { "key": "token", "value": "{{refreshToken}}" } ] }
+					}
 				}
 			]
 		},
 		{
-			"name": "1. Gestão de Quadro (Kanban)",
+			"name": "2. Configurações Globais",
 			"item": [
 				{
-					"name": "Criar Colunas Padrão",
+					"name": "List All Priorities",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/priorities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "priorities"] }
+					}
+				},
+				{
+					"name": "Create Priority",
 					"request": {
 						"method": "POST",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Em Andamento\",\n    \"color\": \"#f1c40f\",\n    \"projectId\": 1,\n    \"position\": 1\n}",
+							"raw": "{\n    \"name\": \"Crítica\",\n    \"position\": 4\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/priorities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "priorities"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Espaços & Projetos",
+			"item": [
+				{
+					"name": "List My Spaces",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/spaces", "host": ["{{baseUrl}}"], "path": ["api", "v1", "spaces"] }
+					}
+				},
+				{
+					"name": "Create Space",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Engenharia\",\n    \"description\": \"Espaço para times de dev\",\n    \"imageUrl\": \"\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/spaces", "host": ["{{baseUrl}}"], "path": ["api", "v1", "spaces"] }
+					}
+				},
+				{
+					"name": "List Projects by Space",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/projects/space/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects", "space", "1"] }
+					}
+				},
+				{
+					"name": "Create Project",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FolksFlow Backend\",\n    \"description\": \"API Java Spring\",\n    \"spaceId\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/projects", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Kanban (Status & Tasks)",
+			"item": [
+				{
+					"name": "List Status by Project",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/status/project/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "status", "project", "1"] }
+					}
+				},
+				{
+					"name": "Create Status",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"To Do\",\n    \"color\": \"#34495e\",\n    \"projectId\": 1,\n    \"position\": 0\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/status", "host": ["{{baseUrl}}"], "path": ["api", "v1", "status"] }
 					}
 				},
 				{
-					"name": "Listar Board (Colunas)",
+					"name": "List Tasks by Status",
 					"request": {
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/status/project/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "status", "project", "1"] }
-					}
-				}
-			]
-		},
-		{
-			"name": "2. Operações de Tarefas",
-			"item": [
-				{
-					"name": "Mover Tarefa (Troca de Status)",
-					"request": {
-						"method": "PATCH",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/tasks/1/move?targetStatusId=2&position=0",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "tasks", "1", "move"],
-							"query": [
-								{ "key": "targetStatusId", "value": "2", "description": "ID da nova coluna" },
-								{ "key": "position", "value": "0", "description": "Nova posição na lista (ordenada)" }
-							]
-						}
-					},
-					"description": "Simula o 'Drag and Drop' movendo a tarefa de uma coluna para outra."
-				},
-				{
-					"name": "Reordenar Tarefa (Mesma Coluna)",
-					"request": {
-						"method": "PATCH",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/tasks/1/move?targetStatusId=1&position=5",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "tasks", "1", "move"],
-							"query": [
-								{ "key": "targetStatusId", "value": "1", "description": "Mantém a mesma coluna" },
-								{ "key": "position", "value": "5", "description": "Muda apenas a ordem" }
-							]
-						}
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/status/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "status", "1"] }
 					}
 				},
 				{
-					"name": "Atribuir Responsável",
-					"request": {
-						"method": "POST",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/assign/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "assign", "1"] }
-					},
-					"description": "Vincula um usuário (userId) à tarefa (taskId)."
-				},
-				{
-					"name": "Remover Responsável",
-					"request": {
-						"method": "DELETE",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/unassign/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "unassign", "1"] }
-					}
-				}
-			]
-		},
-		{
-			"name": "3. Colaboração & Contexto",
-			"item": [
-				{
-					"name": "Adicionar Comentário",
+					"name": "Create Task",
 					"request": {
 						"method": "POST",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": \"Candidato demonstrou excelente conhecimento em Java 21 na entrevista.\",\n    \"taskId\": 1\n}",
+							"raw": "{\n    \"title\": \"Implementar Swagger\",\n    \"description\": \"Documentar a API v1\",\n    \"statusId\": 1,\n    \"priorityId\": 1,\n    \"position\": 0\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks"] }
+					}
+				},
+				{
+					"name": "Move/Reorder Task",
+					"request": {
+						"method": "PATCH",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/move?targetStatusId=2&position=0", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "move"], "query": [ { "key": "targetStatusId", "value": "2" }, { "key": "position", "value": "0" } ] }
+					}
+				},
+				{
+					"name": "Assign User to Task",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/assign/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "assign", "1"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Atividades & Tags",
+			"item": [
+				{
+					"name": "List Activities by Task",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/activities/task/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "activities", "task", "1"] }
+					}
+				},
+				{
+					"name": "Add Comment",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"Trabalho em andamento...\",\n    \"taskId\": 1\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/activities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "activities"] }
 					}
 				},
 				{
-					"name": "Criar Tag de Espaço",
+					"name": "List Tags by Space",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tags/space/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tags", "space", "1"] }
+					}
+				},
+				{
+					"name": "Create Tag",
 					"request": {
 						"method": "POST",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Urgente\",\n    \"color\": \"#e74c3c\",\n    \"spaceId\": 1\n}",
+							"raw": "{\n    \"name\": \"Frontend\",\n    \"color\": \"#3498db\",\n    \"spaceId\": 1\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/tags", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tags"] }
 					}
 				},
 				{
-					"name": "Vincular Tag à Tarefa",
+					"name": "Associate Tag to Task",
 					"request": {
 						"method": "POST",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"url": { "raw": "{{baseUrl}}/api/v1/tags/task/1/associate/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tags", "task", "1", "associate", "1"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "6. RH (Companies & Candidates)",
+			"item": [
+				{
+					"name": "List All Companies",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/companies", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies"] }
+					}
+				},
+				{
+					"name": "List Candidates by Company",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/companies/1/candidates", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies", "1", "candidates"] }
+					}
+				},
+				{
+					"name": "Search Candidates",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/candidates?name=Silva", "host": ["{{baseUrl}}"], "path": ["api", "v1", "candidates"], "query": [ { "key": "name", "value": "Silva" } ] }
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Notificações",
+			"item": [
+				{
+					"name": "My Notifications",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/notifications", "host": ["{{baseUrl}}"], "path": ["api", "v1", "notifications"] }
+					}
+				},
+				{
+					"name": "Unread Count",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/notifications/unread/count", "host": ["{{baseUrl}}"], "path": ["api", "v1", "notifications", "unread", "count"] }
+					}
+				},
+				{
+					"name": "Mark as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/notifications/1/read", "host": ["{{baseUrl}}"], "path": ["api", "v1", "notifications", "1", "read"] }
 					}
 				}
 			]

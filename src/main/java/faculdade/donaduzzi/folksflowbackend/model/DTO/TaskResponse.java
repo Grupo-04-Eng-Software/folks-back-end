@@ -21,6 +21,7 @@ public class TaskResponse {
     private Integer priorityId;
     private LocalDate dueDate;
     private Integer position;
+    private Double estimatedHours;
     private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -34,6 +35,7 @@ public class TaskResponse {
                 .priorityId(task.getPriority().getPriorityId())
                 .dueDate(task.getDueDate())
                 .position(task.getPosition())
+                .estimatedHours(task.getEstimatedHours())
                 .isActive(task.getIsActive())
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())

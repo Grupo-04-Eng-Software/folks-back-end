@@ -11,6 +11,8 @@ import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.TaskRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserTaskRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.ChecklistItemRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.TimeEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,8 @@ public class TaskService {
     private final PriorityRepository priorityRepository;
     private final UserRepository userRepository;
     private final UserTaskRepository userTaskRepository;
+    private final ChecklistItemRepository checklistItemRepository;
+    private final TimeEntryRepository timeEntryRepository;
 
     public List<TaskResponse> findOverdue() {
         return taskRepository.findOverdueTasks(LocalDate.now())
@@ -44,6 +48,11 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    public Task findById(Integer id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+    }
+
     @Transactional
     public TaskResponse create(TaskRequest request, User author) {
         Status status = statusService.findById(request.getStatusId());
@@ -56,6 +65,7 @@ public class TaskService {
         task.setStatus(status);
         task.setPriority(priority);
         task.setDueDate(request.getDueDate());
+        task.setEstimatedHours(request.getEstimatedHours());
         task.setIsActive(true);
         task.setCreatedAt(LocalDateTime.now());
         task.setUpdatedAt(LocalDateTime.now());
@@ -67,8 +77,7 @@ public class TaskService {
         }
 
         if (request.getParentTaskId() != null) {
-            Task parent = taskRepository.findById(request.getParentTaskId())
-                    .orElseThrow(() -> new RuntimeException("Parent task not found"));
+            Task parent = findById(request.getParentTaskId());
             task.setParentTask(parent);
         }
 
@@ -89,8 +98,7 @@ public class TaskService {
 
     @Transactional
     public TaskResponse moveTask(Integer taskId, Integer targetStatusId, Integer newPosition) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Task task = findById(taskId);
         Status targetStatus = statusService.findById(targetStatusId);
 
         task.setStatus(targetStatus);
@@ -102,8 +110,7 @@ public class TaskService {
 
     @Transactional
     public void assignUser(Integer taskId, Integer userId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Task task = findById(taskId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -126,10 +133,61 @@ public class TaskService {
 
     @Transactional
     public void delete(Integer id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Task task = findById(id);
         task.setIsActive(false);
         task.setUpdatedAt(LocalDateTime.now());
         taskRepository.save(task);
+    }
+
+    @Transactional
+    public void addChecklistItem(Integer taskId, String content) {
+        Task task = findById(taskId);
+        faculdade.donaduzzi.folksflowbackend.model.entities.ChecklistItem item = new faculdade.donaduzzi.folksflowbackend.model.entities.ChecklistItem();
+        item.setTask(task);
+        item.setContent(content);
+        item.setIsCompleted(false);
+        item.setCreatedAt(LocalDateTime.now());
+        item.setUpdatedAt(LocalDateTime.now());
+        checklistItemRepository.save(item);
+    }
+
+    @Transactional
+    public void toggleChecklistItem(Integer itemId) {
+        faculdade.donaduzzi.folksflowbackend.model.entities.ChecklistItem item = checklistItemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Checklist item not found"));
+        item.setIsCompleted(!item.getIsCompleted());
+        item.setUpdatedAt(LocalDateTime.now());
+        checklistItemRepository.save(item);
+    }
+
+    @Transactional
+    public void startTime(Integer taskId, User user) {
+        Task task = findById(taskId);
+        timeEntryRepository.findByTaskAndUserAndEndTimeIsNull(task, user)
+                .ifPresent(te -> { throw new RuntimeException("Timer already running for this task and user"); });
+
+        faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry entry = new faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry();
+        entry.setTask(task);
+        entry.setUser(user);
+        entry.setStartTime(LocalDateTime.now());
+        timeEntryRepository.save(entry);
+    }
+
+    @Transactional
+    public void stopTime(Integer taskId, User user) {
+        Task task = findById(taskId);
+        faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry entry = timeEntryRepository.findByTaskAndUserAndEndTimeIsNull(task, user)
+                .orElseThrow(() -> new RuntimeException("No running timer found for this task and user"));
+
+        entry.setEndTime(LocalDateTime.now());
+        long minutes = java.time.Duration.between(entry.getStartTime(), entry.getEndTime()).toMinutes();
+        entry.setDurationMinutes(minutes);
+        timeEntryRepository.save(entry);
+    }
+
+    public Long getTotalTimeSpent(Integer taskId) {
+        return timeEntryRepository.findByTaskTaskId(taskId).stream()
+                .mapToLong(te -> te.getDurationMinutes() != null ? te.getDurationMinutes() : 0L)
+                .sum();
     }
 }

@@ -51,6 +51,9 @@ public class Task {
     @Column(name = "position", nullable = false)
     private Integer position;
 
+    @Column(name = "estimated_hours")
+    private Double estimatedHours;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 

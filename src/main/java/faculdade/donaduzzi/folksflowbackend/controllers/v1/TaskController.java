@@ -59,4 +59,33 @@ public class TaskController {
         taskService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/checklist")
+    public ResponseEntity<Void> addChecklistItem(@PathVariable Integer id, @RequestBody String content) {
+        taskService.addChecklistItem(id, content);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/checklist/{itemId}/toggle")
+    public ResponseEntity<Void> toggleChecklistItem(@PathVariable Integer itemId) {
+        taskService.toggleChecklistItem(itemId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/time/start")
+    public ResponseEntity<Void> startTime(@PathVariable Integer id, @AuthenticationPrincipal User user) {
+        taskService.startTime(id, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/time/stop")
+    public ResponseEntity<Void> stopTime(@PathVariable Integer id, @AuthenticationPrincipal User user) {
+        taskService.stopTime(id, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/time/total")
+    public ResponseEntity<Long> getTotalTime(@PathVariable Integer id) {
+        return ResponseEntity.ok(taskService.getTotalTimeSpent(id));
+    }
 }

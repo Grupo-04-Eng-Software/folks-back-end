@@ -29,5 +29,7 @@ public class TaskRequest {
     
     private Integer position;
     
+    private Double estimatedHours;
+    
     private Integer parentTaskId;
 }

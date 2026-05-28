@@ -7,9 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
+import java.time.LocalDate;
 
 @Repository
 public interface TaskRepository extends BaseRepository<Task, Integer>{
+
+    @Query("SELECT t FROM Task t WHERE t.dueDate < :today AND t.status.isFinalStatus = false AND t.isActive = true")
+    List<Task> findOverdueTasks(@Param("today") LocalDate today);
 
     @Query("SELECT DISTINCT t FROM Task t " +
             "LEFT JOIN t.assignees a " +

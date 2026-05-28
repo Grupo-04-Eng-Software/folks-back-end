@@ -37,6 +37,7 @@ public class StatusService {
         status.setName(request.getName());
         status.setColor(request.getColor());
         status.setProject(project);
+        status.setIsFinalStatus(request.getIsFinalStatus() != null && request.getIsFinalStatus());
         
         // Se a posição não for enviada, coloca no final
         if (request.getPosition() == null) {

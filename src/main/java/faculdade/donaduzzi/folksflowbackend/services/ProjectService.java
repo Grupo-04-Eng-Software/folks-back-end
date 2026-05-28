@@ -56,20 +56,21 @@ public class ProjectService {
         userProjectRepository.save(userProject);
 
         // Criar Status Padrão
-        createDefaultStatus("Backlog", "#7f8c8d", 0, savedProject);
-        createDefaultStatus("A Fazer", "#3498db", 1, savedProject);
-        createDefaultStatus("Em Andamento", "#f1c40f", 2, savedProject);
-        createDefaultStatus("Concluído", "#2ecc71", 3, savedProject);
+        createDefaultStatus("Backlog", "#7f8c8d", 0, savedProject, false);
+        createDefaultStatus("A Fazer", "#3498db", 1, savedProject, false);
+        createDefaultStatus("Em Andamento", "#f1c40f", 2, savedProject, false);
+        createDefaultStatus("Concluído", "#2ecc71", 3, savedProject, true);
 
         return ProjectResponse.fromEntity(savedProject);
     }
 
-    private void createDefaultStatus(String name, String color, Integer position, Project project) {
+    private void createDefaultStatus(String name, String color, Integer position, Project project, Boolean isFinal) {
         Status status = new Status();
         status.setName(name);
         status.setColor(color);
         status.setPosition(position);
         status.setProject(project);
+        status.setIsFinalStatus(isFinal);
         status.setCreatedAt(LocalDateTime.now());
         status.setUpdatedAt(LocalDateTime.now());
         statusRepository.save(status);

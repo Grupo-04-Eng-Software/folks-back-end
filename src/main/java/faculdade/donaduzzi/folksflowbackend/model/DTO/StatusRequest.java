@@ -22,4 +22,6 @@ public class StatusRequest {
     private Integer projectId;
     
     private Integer position;
+
+    private Boolean isFinalStatus = false;
 }

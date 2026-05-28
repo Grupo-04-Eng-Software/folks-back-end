@@ -15,6 +15,7 @@ public class StatusResponse {
     private String name;
     private String color;
     private Integer position;
+    private Boolean isFinalStatus;
 
     public static StatusResponse fromEntity(Status status) {
         return StatusResponse.builder()
@@ -22,6 +23,7 @@ public class StatusResponse {
                 .name(status.getName())
                 .color(status.getColor())
                 .position(status.getPosition())
+                .isFinalStatus(status.getIsFinalStatus())
                 .build();
     }
 }

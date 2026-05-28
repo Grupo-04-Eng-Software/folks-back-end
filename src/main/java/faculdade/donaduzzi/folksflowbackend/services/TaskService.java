@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,13 @@ public class TaskService {
     private final PriorityRepository priorityRepository;
     private final UserRepository userRepository;
     private final UserTaskRepository userTaskRepository;
+
+    public List<TaskResponse> findOverdue() {
+        return taskRepository.findOverdueTasks(LocalDate.now())
+                .stream()
+                .map(TaskResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
 
     public List<TaskResponse> findAllByStatus(Integer statusId) {
         return taskRepository.findAll().stream()

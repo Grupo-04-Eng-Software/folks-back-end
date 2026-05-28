@@ -185,6 +185,15 @@
 					}
 				},
 				{
+					"name": "List Overdue Tasks",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/overdue", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "overdue"] }
+					},
+					"description": "Retorna tarefas com data de vencimento passada que não estão em colunas finalizadas."
+				},
+				{
 					"name": "Create Task",
 					"request": {
 						"method": "POST",

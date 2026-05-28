@@ -40,6 +40,9 @@ public class Status {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_final_status", nullable = false)
+    private Boolean isFinalStatus;
+
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Task> tasks;
 }

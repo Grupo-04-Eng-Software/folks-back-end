@@ -24,6 +24,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.findAllByStatus(statusId));
     }
 
+    @GetMapping("/overdue")
+    public ResponseEntity<List<TaskResponse>> getOverdueTasks() {
+        return ResponseEntity.ok(taskService.findOverdue());
+    }
+
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid TaskRequest request, @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.create(request, user));

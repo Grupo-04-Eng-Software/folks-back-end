@@ -6,6 +6,8 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,16 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+
+    @GetMapping
+    public ResponseEntity<Page<TaskResponse>> searchTasks(
+            @RequestParam(required = false) Integer statusId,
+            @RequestParam(required = false) Integer priorityId,
+            @RequestParam(required = false) Integer tagId,
+            @RequestParam(required = false) String title,
+            Pageable pageable) {
+        return ResponseEntity.ok(taskService.searchTasks(statusId, priorityId, tagId, title, pageable));
+    }
 
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<TaskResponse>> getTasksByStatus(@PathVariable Integer statusId) {

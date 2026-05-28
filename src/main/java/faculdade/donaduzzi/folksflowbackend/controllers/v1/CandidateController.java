@@ -6,6 +6,8 @@ import faculdade.donaduzzi.folksflowbackend.services.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +26,15 @@ public class CandidateController {
     private final FileStorageService fileStorageService;
 
     @GetMapping
-    public ResponseEntity<List<CandidateResponse>> getAllCandidates(@RequestParam(required = false) String name) {
-        if (name != null && !name.isEmpty()) {
-            return ResponseEntity.ok(candidateService.findByName(name));
+    public ResponseEntity<Page<CandidateResponse>> getAllCandidates(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String linkedIn,
+            Pageable pageable) {
+        if ((name != null && !name.isEmpty()) || (email != null && !email.isEmpty()) || (linkedIn != null && !linkedIn.isEmpty())) {
+            return ResponseEntity.ok(candidateService.search(name, email, linkedIn, pageable));
         }
-        return ResponseEntity.ok(candidateService.findAll());
+        return ResponseEntity.ok(candidateService.findAll(pageable));
     }
 
     @PostMapping("/{id}/associate-company/{companyId}")

@@ -6,6 +6,10 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
 import faculdade.donaduzzi.folksflowbackend.repository.CandidateRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import faculdade.donaduzzi.folksflowbackend.repository.specifications.CandidateSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +24,17 @@ public class CandidateService {
     private final CompanyRepository companyRepository;
     private final FileStorageService fileStorageService;
 
-    public List<CandidateResponse> findAll() {
-        return candidateRepository.findAll().stream()
-                .map(CandidateResponse::fromEntity)
-                .collect(Collectors.toList());
+    public Page<CandidateResponse> findAll(Pageable pageable) {
+        return candidateRepository.findAll(pageable)
+                .map(CandidateResponse::fromEntity);
+    }
+
+    public Page<CandidateResponse> search(String name, String email, String linkedIn, Pageable pageable) {
+        Specification<Candidate> spec = Specification.where(CandidateSpecifications.nameContains(name))
+                .and(CandidateSpecifications.emailContains(email))
+                .and(CandidateSpecifications.linkedInContains(linkedIn));
+
+        return candidateRepository.findAll(spec, pageable).map(CandidateResponse::fromEntity);
     }
 
     public Candidate findById(Integer id) {

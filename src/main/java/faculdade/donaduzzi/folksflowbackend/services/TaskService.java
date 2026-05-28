@@ -13,7 +13,11 @@ import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserTaskRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.ChecklistItemRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.TimeEntryRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.specifications.TaskSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -189,5 +193,14 @@ public class TaskService {
         return timeEntryRepository.findByTaskTaskId(taskId).stream()
                 .mapToLong(te -> te.getDurationMinutes() != null ? te.getDurationMinutes() : 0L)
                 .sum();
+    }
+
+    public Page<TaskResponse> searchTasks(Integer statusId, Integer priorityId, Integer tagId, String title, Pageable pageable) {
+        Specification<Task> spec = Specification.where(TaskSpecifications.hasStatus(statusId))
+                .and(TaskSpecifications.hasPriority(priorityId))
+                .and(TaskSpecifications.hasTag(tagId))
+                .and(TaskSpecifications.titleContains(title));
+
+        return taskRepository.findAll(spec, pageable).map(TaskResponse::fromEntity);
     }
 }

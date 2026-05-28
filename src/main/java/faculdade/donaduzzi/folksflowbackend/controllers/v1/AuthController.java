@@ -19,7 +19,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(UserResponse.fromEntity(user));
+        return ResponseEntity.ok(authService.getMe(user));
     }
 
     @PostMapping("/login")

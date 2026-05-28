@@ -27,6 +27,13 @@ public class AuthService {
 
     private final faculdade.donaduzzi.folksflowbackend.repository.AddressRepository addressRepository;
 
+    @Transactional(readOnly = true)
+    public UserResponse getMe(User user) {
+        User fullUser = userRepository.findById(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return UserResponse.fromEntity(fullUser);
+    }
+
     public LoginResponseDTO login(LoginRequestDTO body) {
         User user = userRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));

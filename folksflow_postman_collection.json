@@ -1,26 +1,60 @@
 {
 	"info": {
-		"_postman_id": "folksflow-api-collection",
-		"name": "FolksFlow API v1",
-		"description": "Coleção completa para teste do backend do sistema Kanban FolksFlow",
+		"_postman_id": "folksflow-v1-full-flow",
+		"name": "FolksFlow API v1 - Blank DB Flow",
+		"description": "Coleção ajustada para banco de dados vazio. Siga a ordem numérica das pastas.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Auth",
+			"name": "1. Setup (Dependências Obrigatórias)",
 			"item": [
 				{
-					"name": "Register",
+					"name": "Create Initial Address",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@folks.com\",\n    \"password\": \"admin123\"\n}",
+							"raw": "{\n    \"street\": \"Rua da Paz\",\n    \"number\": \"123\",\n    \"city\": \"Toledo\",\n    \"state\": \"PR\",\n    \"zipCode\": \"85900-000\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/addresses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "addresses"] }
+					},
+					"description": "Crie um endereço primeiro para obter o address_id (Obrigatório para User)."
+				},
+				{
+					"name": "Create Initial Priority",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Alta\",\n    \"level\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/priorities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "priorities"] }
+					},
+					"description": "Crie prioridades (Ex: Baixa, Média, Alta) antes de criar Tasks."
+				}
+			]
+		},
+		{
+			"name": "2. Auth & User",
+			"item": [
+				{
+					"name": "Register (With Address ID)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@folks.com\",\n    \"password\": \"admin123\",\n    \"addressId\": 1\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register"] }
-					}
+					},
+					"description": "Certifique-se de passar um addressId válido."
 				},
 				{
 					"name": "Login",
@@ -47,33 +81,12 @@
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "login"] }
 					}
-				},
-				{
-					"name": "Refresh Token",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/refresh?token={{refreshToken}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "auth", "refresh"],
-							"query": [ { "key": "token", "value": "{{refreshToken}}" } ]
-						}
-					}
 				}
 			]
 		},
 		{
-			"name": "Spaces",
+			"name": "3. Kanban Workflow",
 			"item": [
-				{
-					"name": "List My Spaces",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/spaces", "host": ["{{baseUrl}}"], "path": ["api", "v1", "spaces"] }
-					}
-				},
 				{
 					"name": "Create Space",
 					"request": {
@@ -81,23 +94,10 @@
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Recrutamento Tech\",\n    \"description\": \"Espaço para processos seletivos de tecnologia\",\n    \"imageUrl\": \"https://placehold.co/600x400\"\n}",
+							"raw": "{\n    \"name\": \"RH - Matriz\",\n    \"description\": \"Gestão de vagas globais\",\n    \"isActive\": true\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/spaces", "host": ["{{baseUrl}}"], "path": ["api", "v1", "spaces"] }
-					}
-				}
-			]
-		},
-		{
-			"name": "Projects",
-			"item": [
-				{
-					"name": "List Projects by Space",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/projects/space/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects", "space", "1"] }
 					}
 				},
 				{
@@ -107,23 +107,10 @@
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Vaga Desenvolvedor Java\",\n    \"description\": \"Processo para contratar devs seniores\",\n    \"spaceId\": 1\n}",
+							"raw": "{\n    \"name\": \"Vaga Dev Java\",\n    \"description\": \"Projeto para recrutamento\",\n    \"spaceId\": 1\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/projects", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects"] }
-					}
-				}
-			]
-		},
-		{
-			"name": "Kanban (Status & Tasks)",
-			"item": [
-				{
-					"name": "List Status by Project",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/status/project/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "status", "project", "1"] }
 					}
 				},
 				{
@@ -133,86 +120,23 @@
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Entrevista Técnica\",\n    \"color\": \"#3498db\",\n    \"projectId\": 1\n}",
+							"raw": "{\n    \"name\": \"To Do\",\n    \"color\": \"#cccccc\",\n    \"projectId\": 1,\n    \"position\": 0\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/status", "host": ["{{baseUrl}}"], "path": ["api", "v1", "status"] }
 					}
 				},
 				{
-					"name": "Create Task",
+					"name": "Create Task (Mandatory Fields)",
 					"request": {
 						"method": "POST",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Candidato João Silva\",\n    \"description\": \"Analisar currículo e portfólio\",\n    \"statusId\": 1,\n    \"priorityId\": 1,\n    \"dueDate\": \"2026-06-01\"\n}",
+							"raw": "{\n    \"title\": \"Primeira Task\",\n    \"description\": \"Descrição detalhada\",\n    \"statusId\": 1,\n    \"priorityId\": 1,\n    \"position\": 0\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/tasks", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks"] }
-					}
-				},
-				{
-					"name": "Move Task",
-					"request": {
-						"method": "PATCH",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/tasks/1/move?targetStatusId=2&position=0",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "tasks", "1", "move"],
-							"query": [ { "key": "targetStatusId", "value": "2" }, { "key": "position", "value": "0" } ]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Companies & Candidates",
-			"item": [
-				{
-					"name": "List All Companies",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/companies", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies"] }
-					}
-				},
-				{
-					"name": "List Candidates by Company",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/companies/1/candidates", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies", "1", "candidates"] }
-					}
-				},
-				{
-					"name": "Search Candidates by Name",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/candidates?name=Joao", "host": ["{{baseUrl}}"], "path": ["api", "v1", "candidates"], "query": [ { "key": "name", "value": "Joao" } ] }
-					}
-				}
-			]
-		},
-		{
-			"name": "Notifications",
-			"item": [
-				{
-					"name": "My Notifications",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/notifications", "host": ["{{baseUrl}}"], "path": ["api", "v1", "notifications"] }
-					}
-				},
-				{
-					"name": "Unread Count",
-					"request": {
-						"method": "GET",
-						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/notifications/unread/count", "host": ["{{baseUrl}}"], "path": ["api", "v1", "notifications", "unread", "count"] }
 					}
 				}
 			]

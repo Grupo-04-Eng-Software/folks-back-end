@@ -25,6 +25,8 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final faculdade.donaduzzi.folksflowbackend.repository.AddressRepository addressRepository;
+
     public LoginResponseDTO login(LoginRequestDTO body) {
         User user = userRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -52,8 +54,12 @@ public class AuthService {
         newUser.setCreatedAt(LocalDateTime.now());
         newUser.setUpdatedAt(LocalDateTime.now());
 
-        // Nota: O Address precisaria ser tratado aqui ou vir no DTO. 
-        // Para este MVP, vamos focar no fluxo de auth.
+        if (body.addressId() != null) {
+            newUser.setAddress(addressRepository.findById(body.addressId())
+                    .orElseThrow(() -> new RuntimeException("Address not found")));
+        } else {
+            throw new RuntimeException("Address ID is required for registration");
+        }
 
         userRepository.save(newUser);
 

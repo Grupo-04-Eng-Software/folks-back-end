@@ -44,6 +44,14 @@ As notificações são entregues via protocolo **STOMP** sobre WebSocket.
 
 ## 📑 Referência da API (v1)
 
+### 🛠️ Configuração Inicial (Setup)
+Estes endpoints são necessários para popular o banco de dados vazio (devido às restrições de integridade).
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/addresses` | Cria um endereço (Obrigatório para o Usuário) |
+| `POST` | `/api/v1/priorities` | Cria uma prioridade (Obrigatório para a Task) |
+
 ### 🔑 Autenticação (Auth)
 | Método | Rota | Descrição |
 | :--- | :--- | :--- |

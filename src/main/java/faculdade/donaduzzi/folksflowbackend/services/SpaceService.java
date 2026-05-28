@@ -56,7 +56,9 @@ public class SpaceService {
     public void delete(Integer id) {
         Space space = spaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Space not found"));
-        spaceRepository.delete(space);
+        space.setIsActive(false);
+        space.setUpdatedAt(LocalDateTime.now());
+        spaceRepository.save(space);
     }
 
     public Space findById(Integer id) {

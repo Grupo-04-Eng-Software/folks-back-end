@@ -32,4 +32,10 @@ public class CompanyController {
     public ResponseEntity<List<CandidateResponse>> getCandidatesByCompany(@PathVariable Integer id) {
         return ResponseEntity.ok(candidateService.findByCompany(id));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable Integer id) {
+        companyService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

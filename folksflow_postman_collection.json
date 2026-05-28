@@ -221,6 +221,39 @@
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/assign/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "assign", "1"] }
 					}
+				},
+				{
+					"name": "Search Tasks (Filters)",
+					"request": {
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks?statusId=1&priorityId=1&title=Swagger&page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks"], "query": [ { "key": "statusId", "value": "1" }, { "key": "priorityId", "value": "1" }, { "key": "title", "value": "Swagger" }, { "key": "page", "value": "0" }, { "key": "size", "value": "10" } ] }
+					}
+				},
+				{
+					"name": "Add Checklist Item",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": { "mode": "raw", "raw": "Finalizar documentação" },
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/checklist", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "checklist"] }
+					}
+				},
+				{
+					"name": "Start Timer",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/time/start", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "time", "start"] }
+					}
+				},
+				{
+					"name": "Stop Timer",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks/1/time/stop", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "1", "time", "stop"] }
+					}
 				}
 			]
 		},

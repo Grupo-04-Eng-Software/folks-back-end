@@ -98,14 +98,26 @@ O sistema possui um seeder automático que popula o banco de dados na primeira e
 | :--- | :--- | :--- |
 | `GET` | `/api/v1/companies` | Lista todas as empresas clientes |
 | `GET` | `/api/v1/companies/{id}/candidates` | Candidatos vinculados à empresa |
-| `GET` | `/api/v1/candidates` | Lista/Pesquisa global de candidatos |
+| `GET` | `/api/v1/candidates` | Lista/Pesquisa global de candidatos (Paginado) |
 | `POST` | `/api/v1/candidates/{id}/associate-company/{cid}` | Vincula candidato à empresa |
+| `POST` | `/api/v1/candidates/{id}/resume` | Upload de currículo (Multipart) |
+| `GET` | `/api/v1/candidates/{id}/resume/download` | Download do currículo |
+
+### 🚀 Produtividade e Auditoria
+| Funcionalidade | Descrição |
+| :--- | :--- |
+| **Soft Delete** | Entidades principais (`Task`, `Project`, `Candidate`) usam `is_active=false` em vez de deleção física. |
+| **AuditLog** | Toda criação, edição ou remoção em Services é registrada automaticamente no banco com o autor da ação. |
+| **Time Tracking** | Controle de play/pause em tarefas com cálculo automático de duração. |
+| **Checklists** | Itens de verificação dentro de cada tarefa. |
+| **Filtros Avançados** | Busca dinâmica por tags, prioridade e status em `/api/v1/tasks` e `/api/v1/candidates`. |
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 *   **Java 21** & **Spring Boot 3.2.5**
 *   **Spring Security** + **Auth0 JWT**
+*   **Spring AOP** (Auditoria Automática)
 *   **PostgreSQL 16**
 *   **Hibernate/JPA**
 *   **Spring WebSocket (STOMP)**

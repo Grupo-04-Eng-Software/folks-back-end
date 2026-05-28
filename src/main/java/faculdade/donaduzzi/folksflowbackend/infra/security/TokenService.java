@@ -18,7 +18,7 @@ public class TokenService {
     private String secret;
 
     private Instant generateExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-3horas"));
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String generateToken(User user){
@@ -26,19 +26,19 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             String token = JWT.create()
-                    .withIssuer("login-folks-api")
+                    .withIssuer("folks-flow-api")
                     .withSubject(user.getEmail())
                     .withExpiresAt(this.generateExpirationDate())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception){
-            throw new RuntimeException("error while authenticating");
+            throw new RuntimeException("Error while authenticating");
         }
     }
     public String validateToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm).withIssuer("login-folk-api").build().verify(token).getSubject();
+            return JWT.require(algorithm).withIssuer("folks-flow-api").build().verify(token).getSubject();
         }
         catch(JWTVerificationException exception){
             return null;

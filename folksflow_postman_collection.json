@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"street\": \"Rua da Paz\",\n    \"number\": \"123\",\n    \"city\": \"Toledo\",\n    \"state\": \"PR\",\n    \"zipCode\": \"85900-000\"\n}",
+							"raw": "{\n    \"street\": \"Rua da Paz\",\n    \"number\": \"123\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"Toledo\",\n    \"state\": \"PR\",\n    \"country\": \"Brasil\",\n    \"zipCode\": \"85900-000\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/addresses", "host": ["{{baseUrl}}"], "path": ["api", "v1", "addresses"] }

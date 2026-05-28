@@ -44,13 +44,14 @@ As notificações são entregues via protocolo **STOMP** sobre WebSocket.
 
 ## 📑 Referência da API (v1)
 
-### 🛠️ Configuração Inicial (Setup)
-Estes endpoints são necessários para popular o banco de dados vazio (devido às restrições de integridade).
+### 🛠️ Configuração Inicial (Auto-Seed)
+O sistema possui um seeder automático que popula o banco de dados na primeira execução.
 
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/addresses` | Cria um endereço (Obrigatório para o Usuário) |
-| `POST` | `/api/v1/priorities` | Cria uma prioridade (Obrigatório para a Task) |
+**Credenciais de Acesso Padrão:**
+*   **Email:** `admin@folks.com`
+*   **Senha:** `admin123`
+
+*(As prioridades e um endereço inicial também são criados automaticamente).*
 
 ### 🔑 Autenticação (Auth)
 | Método | Rota | Descrição |

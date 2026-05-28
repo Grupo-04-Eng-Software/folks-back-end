@@ -18,11 +18,17 @@ public class CandidateService {
 
     private final CandidateRepository candidateRepository;
     private final CompanyRepository companyRepository;
+    private final FileStorageService fileStorageService;
 
     public List<CandidateResponse> findAll() {
         return candidateRepository.findAll().stream()
                 .map(CandidateResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public Candidate findById(Integer id) {
+        return candidateRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Candidate not found"));
     }
 
     public List<CandidateResponse> findByName(String name) {
@@ -39,12 +45,29 @@ public class CandidateService {
 
     @Transactional
     public void associateWithCompany(Integer candidateId, Integer companyId) {
-        Candidate candidate = candidateRepository.findById(candidateId)
-                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+        Candidate candidate = findById(candidateId);
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
 
         candidate.getCompanies().add(company);
+        candidateRepository.save(candidate);
+    }
+
+    @Transactional
+    public String uploadResume(Integer candidateId, org.springframework.web.multipart.MultipartFile file) {
+        Candidate candidate = findById(candidateId);
+        String fileName = fileStorageService.storeFile(file);
+        candidate.setResume(fileName);
+        candidate.setUpdatedAt(java.time.LocalDateTime.now());
+        candidateRepository.save(candidate);
+        return fileName;
+    }
+
+    @Transactional
+    public void delete(Integer id) {
+        Candidate candidate = findById(id);
+        candidate.setIsActive(false);
+        candidate.setUpdatedAt(java.time.LocalDateTime.now());
         candidateRepository.save(candidate);
     }
 }

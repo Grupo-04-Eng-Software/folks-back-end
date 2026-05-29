@@ -1,5 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
+import faculdade.donaduzzi.folksflowbackend.model.DTO.CompanyRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CompanyResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
 import faculdade.donaduzzi.folksflowbackend.repository.CompanyRepository;
@@ -27,6 +28,38 @@ public class CompanyService {
         return companyRepository.findById(id)
                 .map(CompanyResponse::fromEntity)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
+    }
+
+    @Transactional
+    public CompanyResponse create(CompanyRequest request) {
+        Company company = new Company();
+        company.setName(request.getName());
+        company.setEmail(request.getEmail());
+        company.setPhone(request.getPhone());
+        company.setWebsite(request.getWebsite());
+        company.setProfilePhoto(request.getProfilePhoto());
+        company.setIsActive(true);
+        company.setCreatedAt(LocalDateTime.now());
+        company.setUpdatedAt(LocalDateTime.now());
+        
+        Company savedCompany = companyRepository.save(company);
+        return CompanyResponse.fromEntity(savedCompany);
+    }
+
+    @Transactional
+    public CompanyResponse update(Integer id, CompanyRequest request) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+        
+        company.setName(request.getName());
+        company.setEmail(request.getEmail());
+        company.setPhone(request.getPhone());
+        company.setWebsite(request.getWebsite());
+        company.setProfilePhoto(request.getProfilePhoto());
+        company.setUpdatedAt(LocalDateTime.now());
+        
+        Company updatedCompany = companyRepository.save(company);
+        return CompanyResponse.fromEntity(updatedCompany);
     }
 
     @Transactional

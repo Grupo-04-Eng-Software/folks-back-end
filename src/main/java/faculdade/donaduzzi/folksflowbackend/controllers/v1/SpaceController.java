@@ -30,6 +30,11 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.create(request, user));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<SpaceResponse> updateSpace(@PathVariable Integer id, @RequestBody @Valid SpaceRequest request) {
+        return ResponseEntity.ok(spaceService.update(id, request));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSpace(@PathVariable Integer id) {

@@ -20,4 +20,8 @@ public class TaskSpecifications {
     public static Specification<Task> titleContains(String title) {
         return (root, query, cb) -> (title == null || title.isEmpty()) ? null : cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%");
     }
+
+    public static Specification<Task> hasAssignee(Integer userId) {
+        return (root, query, cb) -> userId == null ? null : cb.equal(root.join("assignees").get("user").get("userId"), userId);
+    }
 }

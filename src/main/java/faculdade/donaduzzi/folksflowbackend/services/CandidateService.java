@@ -1,8 +1,11 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
+import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Address;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Candidate;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
+import faculdade.donaduzzi.folksflowbackend.repository.AddressRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.CandidateRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ public class CandidateService {
 
     private final CandidateRepository candidateRepository;
     private final CompanyRepository companyRepository;
+    private final AddressRepository addressRepository;
     private final FileStorageService fileStorageService;
 
     public Page<CandidateResponse> findAll(Pageable pageable) {
@@ -52,6 +57,55 @@ public class CandidateService {
         return candidateRepository.findByCompanyId(companyId).stream()
                 .map(CandidateResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CandidateResponse create(CandidateRequest request) {
+        Address address = null;
+        if (request.getAddressId() != null) {
+            address = addressRepository.findById(request.getAddressId())
+                    .orElseThrow(() -> new RuntimeException("Address not found"));
+        } else {
+            // Se não vier endereço, pegamos o primeiro do banco ou lançamos erro
+            // Para simplificar, vamos lançar erro se não vier endereço e não houver um padrão
+            throw new RuntimeException("Address is required for candidate creation");
+        }
+
+        Candidate candidate = new Candidate();
+        candidate.setName(request.getName());
+        candidate.setEmail(request.getEmail());
+        candidate.setPhone(request.getPhone());
+        candidate.setLinkedin(request.getLinkedin());
+        candidate.setProfilePhoto(request.getProfilePhoto());
+        candidate.setAddress(address);
+        candidate.setResume(""); // Inicia vazio
+        candidate.setIsActive(true);
+        candidate.setCreatedAt(LocalDateTime.now());
+        candidate.setUpdatedAt(LocalDateTime.now());
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+        return CandidateResponse.fromEntity(savedCandidate);
+    }
+
+    @Transactional
+    public CandidateResponse update(Integer id, CandidateRequest request) {
+        Candidate candidate = findById(id);
+        
+        candidate.setName(request.getName());
+        candidate.setEmail(request.getEmail());
+        candidate.setPhone(request.getPhone());
+        candidate.setLinkedin(request.getLinkedin());
+        candidate.setProfilePhoto(request.getProfilePhoto());
+        candidate.setUpdatedAt(LocalDateTime.now());
+
+        if (request.getAddressId() != null) {
+            Address address = addressRepository.findById(request.getAddressId())
+                    .orElseThrow(() -> new RuntimeException("Address not found"));
+            candidate.setAddress(address);
+        }
+
+        Candidate updatedCandidate = candidateRepository.save(candidate);
+        return CandidateResponse.fromEntity(updatedCandidate);
     }
 
     @Transactional

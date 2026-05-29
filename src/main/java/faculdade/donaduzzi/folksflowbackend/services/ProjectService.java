@@ -77,6 +77,25 @@ public class ProjectService {
     }
 
     @Transactional
+    public ProjectResponse update(Integer id, ProjectRequest request) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        project.setName(request.getName());
+        project.setDescription(request.getDescription());
+        project.setUpdatedAt(LocalDateTime.now());
+        
+        // Espaço não costuma mudar em edições simples, mas se o request trouxer um novo spaceId, podemos atualizar
+        if (request.getSpaceId() != null && !request.getSpaceId().equals(project.getSpace().getSpaceId())) {
+            Space space = spaceService.findById(request.getSpaceId());
+            project.setSpace(space);
+        }
+
+        Project updatedProject = projectRepository.save(project);
+        return ProjectResponse.fromEntity(updatedProject);
+    }
+
+    @Transactional
     public void delete(Integer id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));

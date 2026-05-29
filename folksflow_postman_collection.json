@@ -80,27 +80,35 @@
 			]
 		},
 		{
-			"name": "2. Configurações Globais",
+			"name": "2. Usuários",
 			"item": [
 				{
-					"name": "List All Priorities",
+					"name": "List All Users",
 					"request": {
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/priorities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "priorities"] }
+						"url": { "raw": "{{baseUrl}}/api/v1/users", "host": ["{{baseUrl}}"], "path": ["api", "v1", "users"] }
 					}
 				},
 				{
-					"name": "Create Priority",
+					"name": "Get User by ID",
 					"request": {
-						"method": "POST",
+						"method": "GET",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"url": { "raw": "{{baseUrl}}/api/v1/users/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "users", "1"] }
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Crítica\",\n    \"position\": 4\n}",
+							"raw": "{\n    \"name\": \"Usuario Atualizado\",\n    \"email\": \"user_upd@folks.com\",\n    \"password\": \"newpassword123\",\n    \"profilePhoto\": \"http://photo.com/user.jpg\",\n    \"role\": \"USER\",\n    \"isActive\": true,\n    \"addressId\": 1\n}",
 							"options": { "raw": { "language": "json" } }
 						},
-						"url": { "raw": "{{baseUrl}}/api/v1/priorities", "host": ["{{baseUrl}}"], "path": ["api", "v1", "priorities"] }
+						"url": { "raw": "{{baseUrl}}/api/v1/users/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "users", "1"] }
 					}
 				}
 			]
@@ -130,6 +138,19 @@
 					}
 				},
 				{
+					"name": "Update Space",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Engenharia Atualizada\",\n    \"description\": \"Novo foco do time\",\n    \"imageUrl\": \"\",\n    \"isActive\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/spaces/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "spaces", "1"] }
+					}
+				},
+				{
 					"name": "List Projects by Space",
 					"request": {
 						"method": "GET",
@@ -148,6 +169,19 @@
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/api/v1/projects", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects"] }
+					}
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FolksFlow v2\",\n    \"description\": \"Refatoração completa\",\n    \"spaceId\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/projects/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "projects", "1"] }
 					}
 				}
 			]
@@ -190,8 +224,7 @@
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"url": { "raw": "{{baseUrl}}/api/v1/tasks/overdue", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks", "overdue"] }
-					},
-					"description": "Retorna tarefas com data de vencimento passada que não estão em colunas finalizadas."
+					}
 				},
 				{
 					"name": "Create Task",
@@ -223,11 +256,11 @@
 					}
 				},
 				{
-					"name": "Search Tasks (Filters)",
+					"name": "Search Tasks (Filters + PERSISTED Home)",
 					"request": {
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
-						"url": { "raw": "{{baseUrl}}/api/v1/tasks?statusId=1&priorityId=1&title=Swagger&page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks"], "query": [ { "key": "statusId", "value": "1" }, { "key": "priorityId", "value": "1" }, { "key": "title", "value": "Swagger" }, { "key": "page", "value": "0" }, { "key": "size", "value": "10" } ] }
+						"url": { "raw": "{{baseUrl}}/api/v1/tasks?userId=1&statusId=1&page=0&size=10", "host": ["{{baseUrl}}"], "path": ["api", "v1", "tasks"], "query": [ { "key": "userId", "value": "1" }, { "key": "statusId", "value": "1" }, { "key": "page", "value": "0" }, { "key": "size", "value": "10" } ] }
 					}
 				},
 				{
@@ -324,6 +357,32 @@
 					}
 				},
 				{
+					"name": "Create Company",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Google\",\n    \"email\": \"hr@google.com\",\n    \"phone\": \"123456789\",\n    \"website\": \"google.com\",\n    \"profilePhoto\": \"\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/companies", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies"] }
+					}
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Alphabet\",\n    \"email\": \"hr@alphabet.com\",\n    \"phone\": \"987654321\",\n    \"website\": \"alphabet.com\",\n    \"profilePhoto\": \"\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/companies/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "companies", "1"] }
+					}
+				},
+				{
 					"name": "List Candidates by Company",
 					"request": {
 						"method": "GET",
@@ -337,6 +396,32 @@
 						"method": "GET",
 						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
 						"url": { "raw": "{{baseUrl}}/api/v1/candidates?name=Silva", "host": ["{{baseUrl}}"], "path": ["api", "v1", "candidates"], "query": [ { "key": "name", "value": "Silva" } ] }
+					}
+				},
+				{
+					"name": "Create Candidate",
+					"request": {
+						"method": "POST",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"João Silva\",\n    \"email\": \"joao@email.com\",\n    \"phone\": \"11999998888\",\n    \"linkedin\": \"linkedin.com/in/joao\",\n    \"profilePhoto\": \"\",\n    \"addressId\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/candidates", "host": ["{{baseUrl}}"], "path": ["api", "v1", "candidates"] }
+					}
+				},
+				{
+					"name": "Update Candidate",
+					"request": {
+						"method": "PUT",
+						"header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"João Silva Atualizado\",\n    \"email\": \"joao_new@email.com\",\n    \"phone\": \"11999998888\",\n    \"linkedin\": \"linkedin.com/in/joao_new\",\n    \"profilePhoto\": \"\",\n    \"addressId\": 1\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{baseUrl}}/api/v1/candidates/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "candidates", "1"] }
 					}
 				}
 			]

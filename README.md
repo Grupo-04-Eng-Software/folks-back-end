@@ -48,6 +48,7 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 | :--- | :--- | :--- |
 | `GET` | `/` | Lista espaços do usuário logado |
 | `POST` | `/` | Cria um novo espaço |
+| `PUT` | `/{id}` | Edita um espaço existente |
 | `DELETE` | `/{id}` | Exclui um espaço (Requer ROLE_ADMIN) |
 
 ### 🏗️ Projetos (`/api/v1/projects`)
@@ -55,6 +56,7 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 | :--- | :--- | :--- |
 | `GET` | `/space/{spaceId}` | Lista projetos vinculados a um espaço |
 | `POST` | `/` | Cria um projeto dentro de um espaço |
+| `PUT` | `/{id}` | Edita um projeto existente |
 | `DELETE` | `/{id}` | Exclui um projeto (Requer ROLE_ADMIN) |
 
 ### 📊 Kanban & Status (`/api/v1/status`)
@@ -67,7 +69,7 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 ### 📋 Tarefas (`/api/v1/tasks`)
 | Método | Rota | Descrição |
 | :--- | :--- | :--- |
-| `GET` | `/` | Pesquisa global de tarefas (Filtros e Paginação) |
+| `GET` | `/` | Pesquisa global de tarefas (Filtros: status, prioridade, tag, título, **usuário**) |
 | `GET` | `/status/{statusId}` | Lista tarefas de uma coluna específica |
 | `GET` | `/overdue` | Lista tarefas com prazo vencido |
 | `POST` | `/` | Cria uma nova tarefa |
@@ -85,6 +87,8 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 | Método | Rota | Descrição |
 | :--- | :--- | :--- |
 | `GET` | `/` | Pesquisa/Lista global de candidatos (Paginado) |
+| `POST` | `/` | Cadastra um novo candidato |
+| `PUT` | `/{id}` | Edita um candidato existente |
 | `POST` | `/{id}/associate-company/{cid}` | Vincula candidato a uma empresa |
 | `POST` | `/{id}/resume` | Upload de currículo (Multipart/Form-Data) |
 | `GET` | `/{id}/resume/download` | Download do arquivo de currículo |
@@ -96,7 +100,16 @@ A API utiliza **JWT (JSON Web Token)** com suporte a **Refresh Token**.
 | `GET` | `/` | Lista todas as empresas clientes |
 | `GET` | `/{id}` | Obtém detalhes de uma empresa específica |
 | `GET` | `/{id}/candidates` | Lista candidatos vinculados à empresa |
+| `POST` | `/` | Cadastra uma nova empresa |
+| `PUT` | `/{id}` | Edita uma empresa existente |
 | `DELETE` | `/{id}` | Exclui empresa (Soft Delete) |
+
+### 👥 Usuários (`/api/v1/users`)
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/` | Lista todos os usuários (Requer autenticação) |
+| `GET` | `/{id}` | Obtém detalhes de um usuário específico |
+| `PUT` | `/{id}` | Edita dados do usuário (nome, email, senha, cargo, foto, endereço) |
 
 ### 💬 Comentários & Atividades (`/api/v1/activities`)
 | Método | Rota | Descrição |

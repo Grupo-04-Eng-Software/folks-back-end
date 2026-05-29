@@ -195,11 +195,12 @@ public class TaskService {
                 .sum();
     }
 
-    public Page<TaskResponse> searchTasks(Integer statusId, Integer priorityId, Integer tagId, String title, Pageable pageable) {
+    public Page<TaskResponse> searchTasks(Integer statusId, Integer priorityId, Integer tagId, String title, Integer userId, Pageable pageable) {
         Specification<Task> spec = Specification.where(TaskSpecifications.hasStatus(statusId))
                 .and(TaskSpecifications.hasPriority(priorityId))
                 .and(TaskSpecifications.hasTag(tagId))
-                .and(TaskSpecifications.titleContains(title));
+                .and(TaskSpecifications.titleContains(title))
+                .and(TaskSpecifications.hasAssignee(userId));
 
         return taskRepository.findAll(spec, pageable).map(TaskResponse::fromEntity);
     }

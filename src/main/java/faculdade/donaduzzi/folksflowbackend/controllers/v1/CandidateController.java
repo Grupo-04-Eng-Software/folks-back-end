@@ -1,8 +1,10 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
+import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
 import faculdade.donaduzzi.folksflowbackend.services.CandidateService;
 import faculdade.donaduzzi.folksflowbackend.services.FileStorageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -35,6 +37,16 @@ public class CandidateController {
             return ResponseEntity.ok(candidateService.search(name, email, linkedIn, pageable));
         }
         return ResponseEntity.ok(candidateService.findAll(pageable));
+    }
+
+    @PostMapping
+    public ResponseEntity<CandidateResponse> createCandidate(@RequestBody @Valid CandidateRequest request) {
+        return ResponseEntity.ok(candidateService.create(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CandidateResponse> updateCandidate(@PathVariable Integer id, @RequestBody @Valid CandidateRequest request) {
+        return ResponseEntity.ok(candidateService.update(id, request));
     }
 
     @PostMapping("/{id}/associate-company/{companyId}")

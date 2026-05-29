@@ -1,9 +1,11 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
+import faculdade.donaduzzi.folksflowbackend.model.DTO.CompanyRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CompanyResponse;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
 import faculdade.donaduzzi.folksflowbackend.services.CompanyService;
 import faculdade.donaduzzi.folksflowbackend.services.CandidateService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,16 @@ public class CompanyController {
     @GetMapping("/{id}/candidates")
     public ResponseEntity<List<CandidateResponse>> getCandidatesByCompany(@PathVariable Integer id) {
         return ResponseEntity.ok(candidateService.findByCompany(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<CompanyResponse> createCompany(@RequestBody @Valid CompanyRequest request) {
+        return ResponseEntity.ok(companyService.create(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Integer id, @RequestBody @Valid CompanyRequest request) {
+        return ResponseEntity.ok(companyService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

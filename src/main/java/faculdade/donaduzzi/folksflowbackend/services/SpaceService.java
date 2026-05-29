@@ -53,6 +53,24 @@ public class SpaceService {
     }
 
     @Transactional
+    public SpaceResponse update(Integer id, SpaceRequest request) {
+        Space space = spaceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Space not found"));
+        
+        space.setName(request.getName());
+        space.setDescription(request.getDescription());
+        space.setProfilePhoto(request.getImageUrl());
+        space.setUpdatedAt(LocalDateTime.now());
+        
+        if (request.getIsActive() != null) {
+            space.setIsActive(request.getIsActive());
+        }
+
+        Space updatedSpace = spaceRepository.save(space);
+        return SpaceResponse.fromEntity(updatedSpace);
+    }
+
+    @Transactional
     public void delete(Integer id) {
         Space space = spaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Space not found"));

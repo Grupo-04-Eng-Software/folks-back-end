@@ -32,4 +32,10 @@ public class TagController {
         tagService.associateWithTask(taskId, tagId);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/task/{taskId}/disassociate/{tagId}")
+    public ResponseEntity<Void> disassociateFromTask(@PathVariable Integer taskId, @PathVariable Integer tagId) {
+        tagService.disassociateFromTask(taskId, tagId);
+        return ResponseEntity.noContent().build();
+    }
 }

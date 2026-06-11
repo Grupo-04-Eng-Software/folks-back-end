@@ -5,11 +5,18 @@ import faculdade.donaduzzi.folksflowbackend.model.DTO.CompanyResponse;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
 import faculdade.donaduzzi.folksflowbackend.services.CompanyService;
 import faculdade.donaduzzi.folksflowbackend.services.CandidateService;
+import faculdade.donaduzzi.folksflowbackend.services.FileStorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
@@ -19,6 +26,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final CandidateService candidateService;
+    private final FileStorageService fileStorageService;
 
     @GetMapping
     public ResponseEntity<List<CompanyResponse>> getAllCompanies() {
@@ -49,5 +57,35 @@ public class CompanyController {
     public ResponseEntity<Void> deleteCompany(@PathVariable Integer id) {
         companyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/logo")
+    public ResponseEntity<String> uploadLogo(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
+        String fileName = companyService.uploadLogo(id, file);
+        return ResponseEntity.ok(fileName);
+    }
+
+    @GetMapping("/{id}/logo/download")
+    public ResponseEntity<Resource> downloadLogo(@PathVariable Integer id) {
+        var company = companyService.findEntityById(id);
+        if (company.getProfilePhoto() == null || company.getProfilePhoto().isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path filePath = fileStorageService.loadFileAsPath(company.getProfilePhoto());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

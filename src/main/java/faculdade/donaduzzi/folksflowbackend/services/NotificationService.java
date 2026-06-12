@@ -1,6 +1,8 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.NotificationResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.NotificationResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Notification;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.enums.NotificationType;
@@ -12,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class NotificationService {
         return notificationRepository.findByRecipientOrderByCreatedAtDesc(user)
                 .stream()
                 .map(NotificationResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -52,7 +53,7 @@ public class NotificationService {
     @Transactional
     public void markAsRead(Long id) {
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new BusinessException("Notification not found"));
         notification.setIsRead(true);
         notificationRepository.save(notification);
     }

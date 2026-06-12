@@ -1,6 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.PriorityResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.PriorityResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Priority;
 import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/priorities")
@@ -20,7 +19,7 @@ public class PriorityController {
     public ResponseEntity<List<PriorityResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
                 .map(PriorityResponse::fromEntity)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @PostMapping

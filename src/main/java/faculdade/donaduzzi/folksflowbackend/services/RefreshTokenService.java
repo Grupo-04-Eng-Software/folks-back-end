@@ -1,10 +1,10 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.infra.security.TokenService;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
 import faculdade.donaduzzi.folksflowbackend.model.entities.RefreshToken;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.repository.RefreshTokenRepository;
-import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,6 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
 
     public RefreshToken createRefreshToken(User user) {
         RefreshToken refreshToken = new RefreshToken();
@@ -30,9 +29,9 @@ public class RefreshTokenService {
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiresAt().isBefore(LocalDateTime.now()) || token.getIsRevoked()) {
+        if (token.getExpiresAt().isBefore(LocalDateTime.now()) || Boolean.TRUE.equals(token.getIsRevoked())) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token was expired or revoked. Please make a new signin request");
+            throw new BusinessException("Refresh token was expired or revoked. Please make a new signin request");
         }
         return token;
     }

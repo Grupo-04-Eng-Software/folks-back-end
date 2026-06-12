@@ -1,7 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.TaskRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.TaskResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.TaskService;
 import jakarta.validation.Valid;

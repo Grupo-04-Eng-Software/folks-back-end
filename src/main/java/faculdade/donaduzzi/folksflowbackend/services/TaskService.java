@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.TaskRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.TaskResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Priority;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
@@ -24,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,26 +43,26 @@ public class TaskService {
         return taskRepository.findOverdueTasks(LocalDate.now())
                 .stream()
                 .map(TaskResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<TaskResponse> findAllByStatus(Integer statusId) {
         return taskRepository.findAll().stream()
                 .filter(t -> t.getStatus().getStatusId().equals(statusId))
                 .map(TaskResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Task findById(Integer id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new BusinessException("Task not found"));
     }
 
     @Transactional
     public TaskResponse create(TaskRequest request, User author) {
         Status status = statusService.findById(request.getStatusId());
         Priority priority = priorityRepository.findById(request.getPriorityId())
-                .orElseThrow(() -> new RuntimeException("Priority not found"));
+                .orElseThrow(() -> new BusinessException("Priority not found"));
 
         Task task = new Task();
         task.setTitle(request.getTitle());
@@ -116,7 +117,7 @@ public class TaskService {
     public void assignUser(Integer taskId, Integer userId) {
         Task task = findById(taskId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found"));
 
         UserTask userTask = new UserTask();
         userTask.setId(new UserTask.UserTaskId(taskId, userId));
@@ -158,7 +159,7 @@ public class TaskService {
     @Transactional
     public void toggleChecklistItem(Integer itemId) {
         faculdade.donaduzzi.folksflowbackend.model.entities.ChecklistItem item = checklistItemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Checklist item not found"));
+                .orElseThrow(() -> new BusinessException("Checklist item not found"));
         item.setIsCompleted(!item.getIsCompleted());
         item.setUpdatedAt(LocalDateTime.now());
         checklistItemRepository.save(item);
@@ -168,7 +169,7 @@ public class TaskService {
     public void startTime(Integer taskId, User user) {
         Task task = findById(taskId);
         timeEntryRepository.findByTaskAndUserAndEndTimeIsNull(task, user)
-                .ifPresent(te -> { throw new RuntimeException("Timer already running for this task and user"); });
+                .ifPresent(te -> { throw new BusinessException("Timer already running for this task and user"); });
 
         faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry entry = new faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry();
         entry.setTask(task);
@@ -181,7 +182,7 @@ public class TaskService {
     public void stopTime(Integer taskId, User user) {
         Task task = findById(taskId);
         faculdade.donaduzzi.folksflowbackend.model.entities.TimeEntry entry = timeEntryRepository.findByTaskAndUserAndEndTimeIsNull(task, user)
-                .orElseThrow(() -> new RuntimeException("No running timer found for this task and user"));
+                .orElseThrow(() -> new BusinessException("No running timer found for this task and user"));
 
         entry.setEndTime(LocalDateTime.now());
         long minutes = java.time.Duration.between(entry.getStartTime(), entry.getEndTime()).toMinutes();

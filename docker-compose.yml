@@ -27,6 +27,13 @@ services:
       JWT_SECRET: senha-braba-demais-no-docker
     depends_on:
       - db
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
 
 volumes:
   postgres_data:

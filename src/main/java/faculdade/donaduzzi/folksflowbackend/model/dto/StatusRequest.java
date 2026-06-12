@@ -1,7 +1,7 @@
-package faculdade.donaduzzi.folksflowbackend.model.DTO;
+package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,19 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SpaceRequest {
-
+public class StatusRequest {
     @NotBlank
     private String name;
-
+    
     @NotBlank
-    private String description;
-
-    @Size(max = 500)
-    private String imageUrl;
+    private String color;
+    
+    @NotNull
+    private Integer projectId;
+    
+    private Integer position;
 
     @Builder.Default
-    private Boolean isActive = true;
-
-
+    private Boolean isFinalStatus = false;
 }

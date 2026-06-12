@@ -5,6 +5,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class TaskSpecifications {
 
+    private TaskSpecifications() {
+    }
+
     public static Specification<Task> hasStatus(Integer statusId) {
         return (root, query, cb) -> statusId == null ? null : cb.equal(root.get("status").get("statusId"), statusId);
     }

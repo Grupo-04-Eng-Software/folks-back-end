@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ActivityRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ActivityResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.ActivityRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.ActivityResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Activity;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +27,13 @@ public class ActivityService {
         return activityRepository.findByTaskTaskIdOrderByCreatedAtDesc(taskId)
                 .stream()
                 .map(ActivityResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
     public ActivityResponse create(ActivityRequest request, User user) {
         Task task = taskRepository.findById(request.getTaskId())
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new BusinessException("Task not found"));
 
         Activity activity = new Activity();
         activity.setContent(request.getContent());

@@ -1,7 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.CandidateRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.CandidateResponse;
 import faculdade.donaduzzi.folksflowbackend.services.CandidateService;
 import faculdade.donaduzzi.folksflowbackend.services.FileStorageService;
 import jakarta.validation.Valid;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/candidates")

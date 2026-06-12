@@ -1,4 +1,4 @@
-package faculdade.donaduzzi.folksflowbackend.model.DTO;
+package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatusRequest {
+public class TagRequest {
     @NotBlank
     private String name;
     
@@ -19,10 +19,5 @@ public class StatusRequest {
     private String color;
     
     @NotNull
-    private Integer projectId;
-    
-    private Integer position;
-
-    @Builder.Default
-    private Boolean isFinalStatus = false;
+    private Integer spaceId;
 }

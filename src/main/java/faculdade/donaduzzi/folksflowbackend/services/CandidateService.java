@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.CandidateResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.CandidateRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.CandidateResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Address;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Candidate;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
@@ -18,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,19 +45,19 @@ public class CandidateService {
 
     public Candidate findById(Integer id) {
         return candidateRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+                .orElseThrow(() -> new BusinessException("Candidate not found"));
     }
 
     public List<CandidateResponse> findByName(String name) {
         return candidateRepository.findByNameContainingIgnoreCase(name).stream()
                 .map(CandidateResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<CandidateResponse> findByCompany(Integer companyId) {
         return candidateRepository.findByCompanyId(companyId).stream()
                 .map(CandidateResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -64,11 +65,11 @@ public class CandidateService {
         Address address = null;
         if (request.getAddressId() != null) {
             address = addressRepository.findById(request.getAddressId())
-                    .orElseThrow(() -> new RuntimeException("Address not found"));
+                    .orElseThrow(() -> new BusinessException("Address not found"));
         } else {
             // Se não vier endereço, pegamos o primeiro do banco ou lançamos erro
             // Para simplificar, vamos lançar erro se não vier endereço e não houver um padrão
-            throw new RuntimeException("Address is required for candidate creation");
+            throw new BusinessException("Address is required for candidate creation");
         }
 
         Candidate candidate = new Candidate();
@@ -100,7 +101,7 @@ public class CandidateService {
 
         if (request.getAddressId() != null) {
             Address address = addressRepository.findById(request.getAddressId())
-                    .orElseThrow(() -> new RuntimeException("Address not found"));
+                    .orElseThrow(() -> new BusinessException("Address not found"));
             candidate.setAddress(address);
         }
 
@@ -112,7 +113,7 @@ public class CandidateService {
     public void associateWithCompany(Integer candidateId, Integer companyId) {
         Candidate candidate = findById(candidateId);
         Company company = companyRepository.findById(companyId)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new BusinessException("Company not found"));
 
         candidate.getCompanies().add(company);
         candidateRepository.save(candidate);

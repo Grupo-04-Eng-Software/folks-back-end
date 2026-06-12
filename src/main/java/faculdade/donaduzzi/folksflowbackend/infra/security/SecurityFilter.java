@@ -1,5 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.infra.security;
 
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -31,7 +33,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var login = tokenService.validateToken(token);
 
         if (login != null) {
-            User user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findByEmail(login).orElseThrow(() -> new BusinessException("User not found"));
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);

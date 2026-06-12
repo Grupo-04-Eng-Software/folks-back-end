@@ -18,4 +18,8 @@ public interface SpaceRepository extends BaseRepository<Space, Integer>{
             "ORDER BY s.createdAt DESC")
     List<Space> findAllSpacesByUserId(@Param("userId") Integer userId);
 
+    @Query("SELECT DISTINCT s FROM Space s " + 
+        "WHERE s.isActive = true")
+    List<Space> findAllActive();
+
 }

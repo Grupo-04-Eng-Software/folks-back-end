@@ -2,6 +2,7 @@ package faculdade.donaduzzi.folksflowbackend.services;
 
 import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusRequest;
 import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusUpdateRequest;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.repository.ProjectRepository;
@@ -58,6 +59,18 @@ public class StatusService {
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
         statusRepository.delete(status);
+    }
+
+    @Transactional
+    public StatusResponse update(Integer id, StatusUpdateRequest request) {
+        Status status = findById(id);
+        status.setName(request.getName());
+        status.setColor(request.getColor());
+        if (request.getIsFinalStatus() != null) {
+            status.setIsFinalStatus(request.getIsFinalStatus());
+        }
+        status.setUpdatedAt(LocalDateTime.now());
+        return StatusResponse.fromEntity(statusRepository.save(status));
     }
 
     public Status findById(Integer id) {

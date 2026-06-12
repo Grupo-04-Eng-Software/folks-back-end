@@ -1,10 +1,12 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
 import faculdade.donaduzzi.folksflowbackend.infra.security.TokenService;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginRequestDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginResponseDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.RegisterRequestDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginResponseDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.RegisterRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.RefreshToken;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.enums.UserRole;
@@ -31,26 +33,26 @@ public class AuthService {
     @Transactional(readOnly = true)
     public UserResponse getMe(User user) {
         User fullUser = userRepository.findById(user.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found"));
         return UserResponse.fromEntity(fullUser);
     }
 
     public LoginResponseDTO login(LoginRequestDTO body) {
         User user = userRepository.findByEmail(body.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found"));
 
         if (passwordEncoder.matches(body.Password(), user.getPasswordHash())) {
             String accessToken = tokenService.generateToken(user);
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
             return new LoginResponseDTO(user.getName(), accessToken, refreshToken.getToken());
         }
-        throw new RuntimeException("Invalid password");
+        throw new BusinessException("Invalid password");
     }
 
     @Transactional
     public LoginResponseDTO register(RegisterRequestDTO body) {
         if (userRepository.findByEmail(body.email()).isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new BusinessException("Email already in use");
         }
 
         User newUser = new User();
@@ -64,9 +66,9 @@ public class AuthService {
 
         if (body.addressId() != null) {
             newUser.setAddress(addressRepository.findById(body.addressId())
-                    .orElseThrow(() -> new RuntimeException("Address not found")));
+                    .orElseThrow(() -> new BusinessException("Address not found")));
         } else {
-            throw new RuntimeException("Address ID is required for registration");
+            throw new BusinessException("Address ID is required for registration");
         }
 
         userRepository.save(newUser);
@@ -85,6 +87,6 @@ public class AuthService {
                     String accessToken = tokenService.generateToken(user);
                     return new LoginResponseDTO(user.getName(), accessToken, token);
                 })
-                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+                .orElseThrow(() -> new BusinessException("Refresh token not found"));
     }
 }

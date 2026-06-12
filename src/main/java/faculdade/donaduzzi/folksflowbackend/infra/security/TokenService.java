@@ -1,4 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.infra.security;
+
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -25,14 +27,13 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("folks-flow-api")
                     .withSubject(user.getEmail())
                     .withExpiresAt(this.generateExpirationDate())
                     .sign(algorithm);
-            return token;
         } catch (JWTCreationException exception){
-            throw new RuntimeException("Error while authenticating");
+            throw new BusinessException("Error while authenticating", exception);
         }
     }
     public String validateToken(String token){

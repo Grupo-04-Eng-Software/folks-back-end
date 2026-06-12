@@ -1,4 +1,4 @@
-package faculdade.donaduzzi.folksflowbackend.model.DTO;
+package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatusUpdateRequest {
+public class CompanyRequest {
     @NotBlank
     private String name;
-
-    @NotBlank
-    private String color;
-
-    private Boolean isFinalStatus;
+    
+    private String email;
+    private String phone;
+    private String website;
+    private String profilePhoto;
 }

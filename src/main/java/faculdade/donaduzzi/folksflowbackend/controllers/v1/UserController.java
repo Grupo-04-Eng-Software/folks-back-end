@@ -1,7 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -8,20 +8,28 @@ import faculdade.donaduzzi.folksflowbackend.repository.AddressRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PriorityRepository priorityRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.seed.admin.password:}")
+    private String configuredAdminPassword;
 
     @Override
     public void run(String... args) {
@@ -47,14 +55,17 @@ public class DataSeeder implements CommandLineRunner {
             User admin = new User();
             admin.setName("Administrador Folks");
             admin.setEmail("admin@folks.com");
-            admin.setPasswordHash(passwordEncoder.encode("admin123"));
+            String adminPassword = StringUtils.hasText(configuredAdminPassword)
+                    ? configuredAdminPassword
+                    : UUID.randomUUID().toString();
+            admin.setPasswordHash(passwordEncoder.encode(adminPassword));
             admin.setRole(UserRole.ADMIN);
             admin.setAddress(address);
             admin.setIsActive(true);
             admin.setCreatedAt(LocalDateTime.now());
             admin.setUpdatedAt(LocalDateTime.now());
             userRepository.save(admin);
-            System.out.println(">>> Usuário ADMIN criado: admin@folks.com / admin123");
+            log.info("Default admin user created: admin@folks.com");
         }
 
         // 3. Criar Prioridades Padrão
@@ -63,7 +74,7 @@ public class DataSeeder implements CommandLineRunner {
             createPriority("Média", 1);
             createPriority("Alta", 2);
             createPriority("Urgente", 3);
-            System.out.println(">>> Prioridades padrão criadas.");
+            log.info("Default priorities created.");
         }
     }
 

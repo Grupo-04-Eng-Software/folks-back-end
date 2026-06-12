@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.enums.UserRole;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,19 +27,19 @@ public class UserService {
     public List<UserResponse> findAll() {
         return userRepository.findAll().stream()
                 .map(UserResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public UserResponse findById(Integer id) {
         return userRepository.findById(id)
                 .map(UserResponse::fromEntity)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found"));
     }
 
     @Transactional
     public UserResponse update(Integer id, UserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found"));
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -59,7 +60,7 @@ public class UserService {
 
         if (request.getAddressId() != null) {
             user.setAddress(addressRepository.findById(request.getAddressId())
-                    .orElseThrow(() -> new RuntimeException("Address not found")));
+                    .orElseThrow(() -> new BusinessException("Address not found")));
         }
 
         User updatedUser = userRepository.save(user);

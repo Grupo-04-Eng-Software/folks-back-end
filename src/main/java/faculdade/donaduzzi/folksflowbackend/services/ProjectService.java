@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ProjectRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ProjectResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Space;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
@@ -16,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class ProjectService {
         return projectRepository.findBySpaceSpaceId(spaceId)
                 .stream()
                 .map(ProjectResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -79,7 +80,7 @@ public class ProjectService {
     @Transactional
     public ProjectResponse update(Integer id, ProjectRequest request) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new BusinessException("Project not found"));
         
         project.setName(request.getName());
         project.setDescription(request.getDescription());
@@ -98,7 +99,7 @@ public class ProjectService {
     @Transactional
     public void delete(Integer id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new BusinessException("Project not found"));
         project.setIsActive(false);
         project.setUpdatedAt(LocalDateTime.now());
         projectRepository.save(project);

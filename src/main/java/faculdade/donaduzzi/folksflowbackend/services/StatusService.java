@@ -1,8 +1,10 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusResponse;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusUpdateRequest;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusUpdateRequest;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.repository.ProjectRepository;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +27,13 @@ public class StatusService {
         return statusRepository.findByProject(projectId)
                 .stream()
                 .map(StatusResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
     public StatusResponse create(StatusRequest request) {
         Project project = projectRepository.findById(request.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new BusinessException("Project not found"));
 
         Status status = new Status();
         status.setName(request.getName());
@@ -57,7 +58,7 @@ public class StatusService {
     @Transactional
     public void delete(Integer id) {
         Status status = statusRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
+                .orElseThrow(() -> new BusinessException("Status not found"));
         statusRepository.delete(status);
     }
 
@@ -75,6 +76,6 @@ public class StatusService {
 
     public Status findById(Integer id) {
         return statusRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
+                .orElseThrow(() -> new BusinessException("Status not found"));
     }
 }

@@ -10,8 +10,6 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 @Repository
 public interface UserRepository extends BaseRepository<User, Integer>{
 
-//    @Query("SELECT u FROM User u where u.email = :email")
-//    Optional<User> findByEmail(@Param("email") String email);
     Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.isActive = true")

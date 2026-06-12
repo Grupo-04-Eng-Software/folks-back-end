@@ -1,6 +1,6 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.NotificationResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.NotificationResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.NotificationService;
 import lombok.RequiredArgsConstructor;

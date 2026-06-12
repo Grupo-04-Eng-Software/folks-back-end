@@ -1,7 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.services;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceResponse;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+
+import faculdade.donaduzzi.folksflowbackend.model.dto.SpaceRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.SpaceResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Space;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.entities.UserSpace;
@@ -10,14 +12,16 @@ import faculdade.donaduzzi.folksflowbackend.repository.UserSpaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SpaceService {
+
+    private static final String SPACE_NOT_FOUND = "Space not found";
 
     private final SpaceRepository spaceRepository;
     private final UserSpaceRepository userSpaceRepository;
@@ -26,7 +30,7 @@ public class SpaceService {
         return spaceRepository.findAllSpacesByUserId(user.getUserId())
                 .stream()
                 .map(SpaceResponse::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -55,7 +59,7 @@ public class SpaceService {
     @Transactional
     public SpaceResponse update(Integer id, SpaceRequest request) {
         Space space = spaceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Space not found"));
+                .orElseThrow(() -> new BusinessException(SPACE_NOT_FOUND));
         
         space.setName(request.getName());
         space.setDescription(request.getDescription());
@@ -73,7 +77,7 @@ public class SpaceService {
     @Transactional
     public void delete(Integer id) {
         Space space = spaceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Space not found"));
+                .orElseThrow(() -> new BusinessException(SPACE_NOT_FOUND));
         space.setIsActive(false);
         space.setUpdatedAt(LocalDateTime.now());
         spaceRepository.save(space);
@@ -81,7 +85,7 @@ public class SpaceService {
 
     public Space findById(Integer id) {
         return spaceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Space not found"));
+                .orElseThrow(() -> new BusinessException(SPACE_NOT_FOUND));
     }
 
     @Transactional

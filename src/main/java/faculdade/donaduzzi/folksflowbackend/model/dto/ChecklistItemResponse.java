@@ -1,4 +1,4 @@
-package faculdade.donaduzzi.folksflowbackend.model.DTO;
+package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import faculdade.donaduzzi.folksflowbackend.model.entities.ChecklistItem;
 import lombok.AllArgsConstructor;

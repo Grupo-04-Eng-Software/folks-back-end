@@ -1,8 +1,8 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusResponse;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusUpdateRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusUpdateRequest;
 import faculdade.donaduzzi.folksflowbackend.services.StatusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -4,6 +4,7 @@ import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
 
 import faculdade.donaduzzi.folksflowbackend.model.dto.StatusRequest;
 import faculdade.donaduzzi.folksflowbackend.model.dto.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusUpdateRequest;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.repository.ProjectRepository;

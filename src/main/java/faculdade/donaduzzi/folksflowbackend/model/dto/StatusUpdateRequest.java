@@ -1,4 +1,4 @@
-package faculdade.donaduzzi.folksflowbackend.model.DTO;
+package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

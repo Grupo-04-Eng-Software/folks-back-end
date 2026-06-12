@@ -1,8 +1,8 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ProjectRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.ProjectResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectResponse;
 import faculdade.donaduzzi.folksflowbackend.services.ProjectService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

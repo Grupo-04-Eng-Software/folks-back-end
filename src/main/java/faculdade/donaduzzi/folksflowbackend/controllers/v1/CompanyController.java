@@ -95,33 +95,4 @@ public class CompanyController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/logo")
-    public ResponseEntity<String> uploadLogo(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
-        String fileName = companyService.uploadLogo(id, file);
-        return ResponseEntity.ok(fileName);
-    }
-
-    @GetMapping("/{id}/logo/download")
-    public ResponseEntity<Resource> downloadLogo(@PathVariable Integer id) {
-        var company = companyService.findEntityById(id);
-        if (company.getProfilePhoto() == null || company.getProfilePhoto().isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        try {
-            Path filePath = fileStorageService.loadFileAsPath(company.getProfilePhoto());
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 }

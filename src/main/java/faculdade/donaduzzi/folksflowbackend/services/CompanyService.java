@@ -38,23 +38,15 @@ public class CompanyService {
     }
 
     @Transactional
-    public String uploadLogo(Integer id, MultipartFile file) {
-        Company company = findEntityById(id);
-        String fileName = fileStorageService.storeFile(file);
-        company.setProfilePhoto(fileName);
-        company.setUpdatedAt(LocalDateTime.now());
-        companyRepository.save(company);
-        return fileName;
-    }
-
-    @Transactional
     public CompanyResponse create(CompanyRequest request) {
         Company company = new Company();
         company.setName(request.getName());
         company.setEmail(request.getEmail());
         company.setPhone(request.getPhone());
         company.setWebsite(request.getWebsite());
-        company.setProfilePhoto(request.getProfilePhoto());
+        if (request.getProfilePhoto() != null) {
+            company.setProfilePhoto(request.getProfilePhoto());
+        }
         company.setIsActive(true);
         company.setCreatedAt(LocalDateTime.now());
         company.setUpdatedAt(LocalDateTime.now());
@@ -72,11 +64,23 @@ public class CompanyService {
         company.setEmail(request.getEmail());
         company.setPhone(request.getPhone());
         company.setWebsite(request.getWebsite());
-        company.setProfilePhoto(request.getProfilePhoto());
+        if (request.getProfilePhoto() != null) {
+            company.setProfilePhoto(request.getProfilePhoto());
+        }
         company.setUpdatedAt(LocalDateTime.now());
-        
+
         Company updatedCompany = companyRepository.save(company);
         return CompanyResponse.fromEntity(updatedCompany);
+    }
+
+    @Transactional
+    public String uploadLogo(Integer id, MultipartFile file) {
+        Company company = findEntityById(id);
+        String fileName = fileStorageService.storeFile(file);
+        company.setProfilePhoto(fileName);
+        company.setUpdatedAt(LocalDateTime.now());
+        companyRepository.save(company);
+        return fileName;
     }
 
     @Transactional

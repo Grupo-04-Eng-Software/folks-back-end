@@ -1,7 +1,8 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.dto.TaskRequest;
-import faculdade.donaduzzi.folksflowbackend.model.dto.TaskResponse;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.ChecklistItemResponse;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskRequest;
+import faculdade.donaduzzi.folksflowbackend.model.DTO.TaskResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.TaskService;
 import jakarta.validation.Valid;
@@ -42,9 +43,24 @@ public class TaskController {
         return ResponseEntity.ok(taskService.findOverdue());
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<TaskResponse>> getMyTasks(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(taskService.getMyTasks(user.getUserId()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponse> getTask(@PathVariable Integer id) {
+        return ResponseEntity.ok(taskService.getById(id));
+    }
+
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid TaskRequest request, @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(taskService.create(request, user));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Integer id, @RequestBody @Valid TaskRequest request) {
+        return ResponseEntity.ok(taskService.update(id, request));
     }
 
     @PatchMapping("/{id}/move")
@@ -71,6 +87,11 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
         taskService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/checklist")
+    public ResponseEntity<List<ChecklistItemResponse>> getChecklistItems(@PathVariable Integer id) {
+        return ResponseEntity.ok(taskService.getChecklistItems(id));
     }
 
     @PostMapping("/{id}/checklist")

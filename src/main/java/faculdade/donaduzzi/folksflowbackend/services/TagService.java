@@ -55,4 +55,15 @@ public class TagService {
         task.getTags().add(tag);
         taskRepository.save(task);
     }
+
+    @Transactional
+    public void disassociateFromTask(Integer taskId, Integer tagId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new RuntimeException("Tag not found"));
+
+        task.getTags().remove(tag);
+        taskRepository.save(task);
+    }
 }

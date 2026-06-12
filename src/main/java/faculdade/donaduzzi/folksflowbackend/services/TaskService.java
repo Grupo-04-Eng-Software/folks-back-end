@@ -2,6 +2,7 @@ package faculdade.donaduzzi.folksflowbackend.services;
 
 import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
 
+import faculdade.donaduzzi.folksflowbackend.model.DTO.ChecklistItemResponse;
 import faculdade.donaduzzi.folksflowbackend.model.dto.TaskRequest;
 import faculdade.donaduzzi.folksflowbackend.model.dto.TaskResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Priority;
@@ -56,6 +57,35 @@ public class TaskService {
     public Task findById(Integer id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Task not found"));
+    }
+
+    public TaskResponse getById(Integer id) {
+        return TaskResponse.fromEntity(findById(id));
+    }
+
+    public List<TaskResponse> getMyTasks(Integer userId) {
+        return taskRepository.findAllTaskByUser(userId)
+                .stream()
+                .map(TaskResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public TaskResponse update(Integer id, TaskRequest request) {
+        Task task = findById(id);
+        Status status = statusService.findById(request.getStatusId());
+        Priority priority = priorityRepository.findById(request.getPriorityId())
+                .orElseThrow(() -> new RuntimeException("Priority not found"));
+
+        task.setTitle(request.getTitle());
+        task.setDescription(request.getDescription());
+        task.setStatus(status);
+        task.setPriority(priority);
+        task.setDueDate(request.getDueDate());
+        task.setEstimatedHours(request.getEstimatedHours());
+        task.setUpdatedAt(LocalDateTime.now());
+
+        return TaskResponse.fromEntity(taskRepository.save(task));
     }
 
     @Transactional
@@ -142,6 +172,13 @@ public class TaskService {
         task.setIsActive(false);
         task.setUpdatedAt(LocalDateTime.now());
         taskRepository.save(task);
+    }
+
+    public List<ChecklistItemResponse> getChecklistItems(Integer taskId) {
+        return checklistItemRepository.findByTaskTaskId(taskId)
+                .stream()
+                .map(ChecklistItemResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Transactional

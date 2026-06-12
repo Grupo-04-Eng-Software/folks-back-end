@@ -61,6 +61,18 @@ public class StatusService {
         statusRepository.delete(status);
     }
 
+    @Transactional
+    public StatusResponse update(Integer id, StatusUpdateRequest request) {
+        Status status = findById(id);
+        status.setName(request.getName());
+        status.setColor(request.getColor());
+        if (request.getIsFinalStatus() != null) {
+            status.setIsFinalStatus(request.getIsFinalStatus());
+        }
+        status.setUpdatedAt(LocalDateTime.now());
+        return StatusResponse.fromEntity(statusRepository.save(status));
+    }
+
     public Status findById(Integer id) {
         return statusRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Status not found"));

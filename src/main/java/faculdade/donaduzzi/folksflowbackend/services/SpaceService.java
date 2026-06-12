@@ -86,4 +86,9 @@ public class SpaceService {
         return spaceRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(SPACE_NOT_FOUND));
     }
+
+    @Transactional
+    public List<SpaceResponse> findAllActive(){
+        return spaceRepository.findAllActive().stream().map(SpaceResponse::fromEntity).collect(Collectors.toList());
+    }
 }

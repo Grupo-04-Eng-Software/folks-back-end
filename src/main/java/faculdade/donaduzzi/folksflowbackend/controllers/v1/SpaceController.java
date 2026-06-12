@@ -22,7 +22,8 @@ public class SpaceController {
 
     @GetMapping
     public ResponseEntity<List<SpaceResponse>> getAllSpaces(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(spaceService.findAllByUser(user));
+        System.out.println("TESTE DEBUG" + spaceService.findAllActive());
+        return ResponseEntity.ok(spaceService.findAllActive());
     }
 
     @PostMapping

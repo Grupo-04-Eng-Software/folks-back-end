@@ -1,7 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.SpaceResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.SpaceRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.SpaceResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.SpaceService;
 import jakarta.validation.Valid;
@@ -22,7 +22,8 @@ public class SpaceController {
 
     @GetMapping
     public ResponseEntity<List<SpaceResponse>> getAllSpaces(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(spaceService.findAllByUser(user));
+        System.out.println("TESTE DEBUG" + spaceService.findAllActive());
+        return ResponseEntity.ok(spaceService.findAllActive());
     }
 
     @PostMapping

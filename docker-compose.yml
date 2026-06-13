@@ -12,6 +12,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d folksflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
@@ -26,7 +31,16 @@ services:
       DB_PASSWORD: root
       JWT_SECRET: senha-braba-demais-no-docker
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: on-failure
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
 
 volumes:
   postgres_data:

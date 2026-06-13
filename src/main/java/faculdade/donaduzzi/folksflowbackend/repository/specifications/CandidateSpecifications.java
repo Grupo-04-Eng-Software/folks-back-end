@@ -5,6 +5,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class CandidateSpecifications {
 
+    private CandidateSpecifications() {
+    }
+
     public static Specification<Candidate> nameContains(String name) {
         return (root, query, cb) -> (name == null || name.isEmpty()) ? null : cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
     }

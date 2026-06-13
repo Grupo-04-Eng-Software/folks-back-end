@@ -1,7 +1,7 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TagRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.TagResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.TagRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.TagResponse;
 import faculdade.donaduzzi.folksflowbackend.services.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,12 @@ public class TagController {
     @PostMapping("/task/{taskId}/associate/{tagId}")
     public ResponseEntity<Void> associateWithTask(@PathVariable Integer taskId, @PathVariable Integer tagId) {
         tagService.associateWithTask(taskId, tagId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/task/{taskId}/disassociate/{tagId}")
+    public ResponseEntity<Void> disassociateFromTask(@PathVariable Integer taskId, @PathVariable Integer tagId) {
+        tagService.disassociateFromTask(taskId, tagId);
         return ResponseEntity.noContent().build();
     }
 }

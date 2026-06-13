@@ -1,8 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginRequestDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginResponseDTO;
+import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginResponseDTO;
 import faculdade.donaduzzi.folksflowbackend.services.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class AuthControllerTest {
     void loginFailure() throws Exception {
         LoginRequestDTO request = new LoginRequestDTO("wrong@email.com", "wrong");
 
-        when(authService.login(any())).thenThrow(new RuntimeException("Invalid credentials"));
+        when(authService.login(any())).thenThrow(new BusinessException("Invalid credentials"));
 
         mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)

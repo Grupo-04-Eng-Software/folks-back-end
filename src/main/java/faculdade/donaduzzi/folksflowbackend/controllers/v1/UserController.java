@@ -1,11 +1,12 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;

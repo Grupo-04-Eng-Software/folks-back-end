@@ -1,9 +1,9 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginRequestDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.LoginResponseDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.RegisterRequestDTO;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.UserResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.LoginResponseDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.RegisterRequestDTO;
+import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.AuthService;
 import lombok.RequiredArgsConstructor;

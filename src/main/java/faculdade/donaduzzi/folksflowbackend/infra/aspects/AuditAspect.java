@@ -83,8 +83,8 @@ public class AuditAspect {
             for (Method method : obj.getClass().getMethods()) {
                 if ((method.getName().startsWith("get") && method.getName().endsWith("Id")) || method.getName().equals("getId")) {
                     Object id = method.invoke(obj);
-                    if (id instanceof Integer) {
-                        return (Integer) id;
+                    if (id instanceof Integer entityId) {
+                        return entityId;
                     }
                 }
             }

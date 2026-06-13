@@ -1,7 +1,8 @@
 package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusRequest;
-import faculdade.donaduzzi.folksflowbackend.model.DTO.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusRequest;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.StatusUpdateRequest;
 import faculdade.donaduzzi.folksflowbackend.services.StatusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,11 @@ public class StatusController {
     @PostMapping
     public ResponseEntity<StatusResponse> createStatus(@RequestBody @Valid StatusRequest request) {
         return ResponseEntity.ok(statusService.create(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StatusResponse> updateStatus(@PathVariable Integer id, @RequestBody @Valid StatusUpdateRequest request) {
+        return ResponseEntity.ok(statusService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

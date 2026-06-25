@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface ActivityRepository extends BaseRepository<Activity, Integer> {
     List<Activity> findByTaskTaskIdOrderByCreatedAtDesc(Integer taskId);
+
+    // Ordem cronológica (mais antigo primeiro) para exibição estilo chat.
+    List<Activity> findByTaskTaskIdOrderByCreatedAtAsc(Integer taskId);
 }

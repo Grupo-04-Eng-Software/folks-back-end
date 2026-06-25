@@ -5,6 +5,7 @@ import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
 import faculdade.donaduzzi.folksflowbackend.model.dto.CompanyRequest;
 import faculdade.donaduzzi.folksflowbackend.model.dto.CompanyResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
+import faculdade.donaduzzi.folksflowbackend.repository.AddressRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CompanyService {
     private static final String COMPANY_NOT_FOUND = "Company not found";
 
     private final CompanyRepository companyRepository;
+    private final AddressRepository addressRepository;
     private final FileStorageService fileStorageService;
 
     public List<CompanyResponse> findAll() {
@@ -50,10 +52,14 @@ public class CompanyService {
         if (request.getProfilePhoto() != null) {
             company.setProfilePhoto(request.getProfilePhoto());
         }
+        if (request.getAddressId() != null) {
+            company.setAddress(addressRepository.findById(request.getAddressId())
+                    .orElseThrow(() -> new BusinessException("Address not found")));
+        }
         company.setIsActive(true);
         company.setCreatedAt(LocalDateTime.now());
         company.setUpdatedAt(LocalDateTime.now());
-        
+
         Company savedCompany = companyRepository.save(company);
         return CompanyResponse.fromEntity(savedCompany);
     }
@@ -69,6 +75,10 @@ public class CompanyService {
         company.setWebsite(request.getWebsite());
         if (request.getProfilePhoto() != null) {
             company.setProfilePhoto(request.getProfilePhoto());
+        }
+        if (request.getAddressId() != null) {
+            company.setAddress(addressRepository.findById(request.getAddressId())
+                    .orElseThrow(() -> new BusinessException("Address not found")));
         }
         company.setUpdatedAt(LocalDateTime.now());
 

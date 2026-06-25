@@ -2,13 +2,19 @@ package faculdade.donaduzzi.folksflowbackend.services;
 
 import faculdade.donaduzzi.folksflowbackend.infra.exceptions.BusinessException;
 
+import faculdade.donaduzzi.folksflowbackend.model.dto.CandidateResponse;
+import faculdade.donaduzzi.folksflowbackend.model.dto.CompanyResponse;
 import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectRequest;
 import faculdade.donaduzzi.folksflowbackend.model.dto.ProjectResponse;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Candidate;
+import faculdade.donaduzzi.folksflowbackend.model.entities.Company;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Project;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Space;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.entities.UserProject;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
+import faculdade.donaduzzi.folksflowbackend.repository.CandidateRepository;
+import faculdade.donaduzzi.folksflowbackend.repository.CompanyRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.ProjectRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.StatusRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserProjectRepository;
@@ -27,6 +33,8 @@ public class ProjectService {
     private final SpaceService spaceService;
     private final UserProjectRepository userProjectRepository;
     private final StatusRepository statusRepository;
+    private final CompanyRepository companyRepository;
+    private final CandidateRepository candidateRepository;
 
     public List<ProjectResponse> findAllBySpace(Integer spaceId) {
         return projectRepository.findBySpaceSpaceId(spaceId)
@@ -102,6 +110,61 @@ public class ProjectService {
                 .orElseThrow(() -> new BusinessException("Project not found"));
         project.setIsActive(false);
         project.setUpdatedAt(LocalDateTime.now());
+        projectRepository.save(project);
+    }
+
+    // ── Vínculo Projeto ↔ Empresa ──────────────────────────────────────────────
+
+    private Project getProject(Integer projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new BusinessException("Project not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CompanyResponse> listCompanies(Integer projectId) {
+        return getProject(projectId).getCompanies().stream()
+                .map(CompanyResponse::fromEntity)
+                .toList();
+    }
+
+    @Transactional
+    public void associateCompany(Integer projectId, Integer companyId) {
+        Project project = getProject(projectId);
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new BusinessException("Company not found"));
+        project.getCompanies().add(company);
+        projectRepository.save(project);
+    }
+
+    @Transactional
+    public void disassociateCompany(Integer projectId, Integer companyId) {
+        Project project = getProject(projectId);
+        project.getCompanies().removeIf(c -> c.getCompanyId().equals(companyId));
+        projectRepository.save(project);
+    }
+
+    // ── Vínculo Projeto ↔ Candidato ────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public List<CandidateResponse> listCandidates(Integer projectId) {
+        return getProject(projectId).getCandidates().stream()
+                .map(CandidateResponse::fromEntity)
+                .toList();
+    }
+
+    @Transactional
+    public void associateCandidate(Integer projectId, Integer candidateId) {
+        Project project = getProject(projectId);
+        Candidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new BusinessException("Candidate not found"));
+        project.getCandidates().add(candidate);
+        projectRepository.save(project);
+    }
+
+    @Transactional
+    public void disassociateCandidate(Integer projectId, Integer candidateId) {
+        Project project = getProject(projectId);
+        project.getCandidates().removeIf(c -> c.getCandidateId().equals(candidateId));
         projectRepository.save(project);
     }
 }

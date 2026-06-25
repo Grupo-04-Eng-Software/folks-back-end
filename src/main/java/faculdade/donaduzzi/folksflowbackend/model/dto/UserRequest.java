@@ -2,7 +2,6 @@ package faculdade.donaduzzi.folksflowbackend.model.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequest {
 
-    // Reference to an existing address (address must already exist)
-    @NotNull
+    // Reference to an existing address (opcional). Ausente no update = mantém o
+    // endereço atual; ausente na criação = usa o endereço padrão.
     private Integer addressId;
 
     @NotBlank
@@ -28,7 +27,8 @@ public class UserRequest {
     private String email;
 
 
-    @NotBlank
+    // Opcional: obrigatório apenas na criação (validado no service).
+    // No update, ausente/vazio significa "manter a senha atual".
     @Size(min = 6, max = 255)
     private String password;
 

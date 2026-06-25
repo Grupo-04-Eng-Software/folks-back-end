@@ -38,6 +38,10 @@ public class Company {
     @Column(name = "website", length = 255)
     private String website;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 

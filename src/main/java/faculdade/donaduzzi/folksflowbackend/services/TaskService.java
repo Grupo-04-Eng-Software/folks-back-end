@@ -10,6 +10,7 @@ import faculdade.donaduzzi.folksflowbackend.model.entities.Status;
 import faculdade.donaduzzi.folksflowbackend.model.entities.Task;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.model.entities.UserTask;
+import faculdade.donaduzzi.folksflowbackend.model.enums.NotificationType;
 import faculdade.donaduzzi.folksflowbackend.repository.PriorityRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.TaskRepository;
 import faculdade.donaduzzi.folksflowbackend.repository.UserRepository;
@@ -41,6 +42,7 @@ public class TaskService {
     private final UserTaskRepository userTaskRepository;
     private final ChecklistItemRepository checklistItemRepository;
     private final TimeEntryRepository timeEntryRepository;
+    private final NotificationService notificationService;
 
     public List<TaskResponse> findOverdue() {
         return taskRepository.findOverdueTasks(LocalDate.now())
@@ -160,6 +162,14 @@ public class TaskService {
         userTask.setCreatedAt(LocalDateTime.now());
 
         userTaskRepository.save(userTask);
+
+        // Notifica o usuário atribuído (em tempo real via WebSocket).
+        notificationService.sendNotification(
+                user,
+                "Você foi atribuído à tarefa: " + task.getTitle(),
+                NotificationType.TASK_ASSIGNMENT,
+                "/tasks/" + taskId
+        );
     }
 
     @Transactional

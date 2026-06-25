@@ -2,7 +2,6 @@ package faculdade.donaduzzi.folksflowbackend.controllers.v1;
 
 import faculdade.donaduzzi.folksflowbackend.model.dto.LoginRequestDTO;
 import faculdade.donaduzzi.folksflowbackend.model.dto.LoginResponseDTO;
-import faculdade.donaduzzi.folksflowbackend.model.dto.RegisterRequestDTO;
 import faculdade.donaduzzi.folksflowbackend.model.dto.UserResponse;
 import faculdade.donaduzzi.folksflowbackend.model.entities.User;
 import faculdade.donaduzzi.folksflowbackend.services.AuthService;
@@ -25,11 +24,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO body) {
         return ResponseEntity.ok(authService.login(body));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<LoginResponseDTO> register(@RequestBody RegisterRequestDTO body) {
-        return ResponseEntity.ok(authService.register(body));
     }
 
     @PostMapping("/refresh")

@@ -18,6 +18,7 @@ public class CompanyResponse {
     private String website;
     private String profilePhoto;
     private Boolean isActive;
+    private AddressResponse address;
 
     public static CompanyResponse fromEntity(Company company) {
         return CompanyResponse.builder()
@@ -28,6 +29,7 @@ public class CompanyResponse {
                 .website(company.getWebsite())
                 .profilePhoto(company.getProfilePhoto())
                 .isActive(company.getIsActive())
+                .address(AddressResponse.fromEntity(company.getAddress()))
                 .build();
     }
 }

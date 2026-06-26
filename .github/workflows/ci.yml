@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [develop, master, main]
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   build-and-test:
     name: Build & Test
@@ -21,8 +26,18 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Build and run tests
+      # 'verify' executa a fase 'test' (Surefire/JUnit) + JaCoCo antes de empacotar.
+      - name: Build and run JUnit tests
         run: ./mvnw -B clean verify
+
+      # Publica um resumo legivel dos testes (passou/falhou) na UI do Actions e anota o PR.
+      - name: Publish JUnit test report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: target/surefire-reports/TEST-*.xml
+          include_passed: true
+          detailed_summary: true
 
       - name: Upload test reports
         if: always()

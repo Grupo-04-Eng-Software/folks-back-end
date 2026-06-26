@@ -171,3 +171,65 @@ Para rodar os testes automatizados:
 
 ## 📮 Postman
 Importe o arquivo `folksflow_postman_collection.json` localizado na raiz para testar todas as rotas rapidamente.
+
+---
+
+## 🐳 DevOps & Infraestrutura
+
+Esta seção documenta a governança de versionamento e a virtualização da aplicação (atende ao Projeto de Governança e Infraestrutura).
+
+### 🌿 Governança de Código (Git Flow)
+O repositório segue o **Git Flow**:
+* `master` — branch estável de produção (recebe apenas releases).
+* `develop` — branch de integração das features.
+* `feature/*` — desenvolvimento de novas funcionalidades, finalizadas via **Pull Request** para `develop`.
+* **Tags** de versão (ex: `v1.0.0`) marcam releases oficiais e disparam o pipeline de publicação (CD).
+
+### 📦 Virtualização do Banco de Dados
+O serviço `db` no [`docker-compose.yml`](docker-compose.yml) sobe um **PostgreSQL 16** isolado:
+* Variáveis de ambiente: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` (configuráveis via `.env`).
+* **Volume** `postgres_data` para **persistência** dos dados entre reinícios do contêiner.
+* Exposto em `localhost:5433` (mapeado para a `5432` interna, evitando conflito com Postgres local).
+
+Subir apenas o banco:
+```bash
+docker compose up -d db
+```
+
+### 🏗️ Virtualização da Aplicação (Multi-stage Build)
+O [`Dockerfile`](Dockerfile) usa **multi-stage build**: um estágio compila o `.jar` com Maven/JDK 21 e o estágio final usa apenas o **JRE Alpine**, gerando uma imagem enxuta.
+
+### 🔗 Orquestração Completa
+O `docker-compose.yml` sobe **aplicação + banco** juntos, interligados pela rede interna `folksflow-net` (**Service Discovery**: o app acessa o banco pelo hostname `db`).
+```bash
+docker compose up --build
+```
+
+### ❤️ Healthcheck (Observabilidade e Resiliência)
+* Endpoint de saúde: **`GET /health`** (público) — retorna `200 UP` quando a aplicação e o banco estão prontos, ou `503 DOWN` caso o banco esteja indisponível.
+* O serviço `app` possui a diretiva `healthcheck` no Compose, garantindo que o contêiner só seja considerado saudável (e receba tráfego) quando estiver 100% pronto.
+
+### 🤖 Pipelines (GitHub Actions)
+| Workflow | Arquivo | Gatilho | Função |
+| :--- | :--- | :--- | :--- |
+| **CI** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Push/PR em `develop`/`master` | Build + testes (`mvnw verify`) |
+| **Security (Trivy)** | [`.github/workflows/security.yml`](.github/workflows/security.yml) | Abertura de Pull Request | Varredura de vulnerabilidades e segredos expostos (DevSecOps) |
+| **CD** | [`.github/workflows/cd.yml`](.github/workflows/cd.yml) | Push de tag `v*.*.*` | Build e publicação da imagem no **Docker Hub** |
+
+#### 🔑 Secrets necessários (Settings → Secrets and variables → Actions)
+Para o CD publicar no Docker Hub, configure no GitHub:
+| Secret | Descrição |
+| :--- | :--- |
+| `DOCKERHUB_USERNAME` | Seu usuário do Docker Hub |
+| `DOCKERHUB_TOKEN` | Access Token gerado em hub.docker.com → Account Settings → Security |
+
+A imagem é publicada como `DOCKERHUB_USERNAME/folks-back-end` com as tags da versão (ex: `1.0.0`, `1.0`) e `latest`.
+
+### 📋 Variáveis de ambiente (`.env` opcional)
+| Variável | Padrão | Descrição |
+| :--- | :--- | :--- |
+| `DB_NAME` | `folksflow` | Nome do banco |
+| `DB_USER` | `postgres` | Usuário do banco |
+| `DB_PASSWORD` | `root` | Senha do banco |
+| `JWT_SECRET` | `senha-braba-demais-no-docker` | Segredo de assinatura do JWT |
+| `DOCKERHUB_USERNAME` | `folksflow` | Prefixo da imagem buildada localmente |

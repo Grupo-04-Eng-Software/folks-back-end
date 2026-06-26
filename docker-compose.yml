@@ -1,39 +1,49 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     container_name: folksflow-db
     environment:
-      POSTGRES_DB: folksflow
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ${DB_NAME:-folksflow}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - folksflow-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d folksflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-folksflow}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   app:
     build: .
+    image: ${DOCKERHUB_USERNAME:-folksflow}/folks-back-end:latest
     container_name: folksflow-app
     ports:
       - "8080:8080"
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_NAME: folksflow
-      DB_USER: postgres
-      DB_PASSWORD: root
-      JWT_SECRET: senha-braba-demais-no-docker
+      DB_NAME: ${DB_NAME:-folksflow}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-senha-braba-demais-no-docker}
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - folksflow-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     restart: on-failure
+
   sonarqube:
     image: sonarqube:lts-community
     container_name: sonarqube
@@ -41,6 +51,12 @@ services:
       - "9000:9000"
     environment:
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    networks:
+      - folksflow-net
+
+networks:
+  folksflow-net:
+    driver: bridge
 
 volumes:
   postgres_data:

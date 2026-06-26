@@ -1,0 +1,46 @@
+name: Security (Trivy)
+
+on:
+  pull_request:
+    branches: [develop, master, main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-scan:
+    name: Trivy repo scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Relatorio legivel no log do PR (vulnerabilidades + segredos + misconfig).
+      # exit-code: 0 -> nao bloqueia o PR, apenas reporta.
+      - name: Trivy report (table)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH,MEDIUM
+          format: table
+          exit-code: "0"
+
+      # Gera SARIF e publica na aba Security > Code scanning do GitHub.
+      - name: Trivy scan (SARIF)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif

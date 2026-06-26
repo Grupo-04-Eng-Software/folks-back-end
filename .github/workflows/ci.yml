@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, master, main]
+  pull_request:
+    branches: [develop, master, main]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # 'verify' executa a fase 'test' (Surefire/JUnit) + JaCoCo antes de empacotar.
+      - name: Build and run JUnit tests
+        run: ./mvnw -B clean verify
+
+      # Publica um resumo legivel dos testes (passou/falhou) na UI do Actions e anota o PR.
+      - name: Publish JUnit test report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: target/surefire-reports/TEST-*.xml
+          include_passed: true
+          detailed_summary: true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          if-no-files-found: ignore

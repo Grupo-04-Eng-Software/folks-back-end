@@ -25,15 +25,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Sanitiza o usuario (remove espacos/quebras de linha que possam vir no secret)
+      # para montar o nome da imagem sem risco de gerar tag invalida (ex: "/folks-back-end").
+      - name: Define image name
+        env:
+          RAW_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          USER_CLEAN="$(echo "$RAW_USER" | tr -d '[:space:]')"
+          echo "IMAGE_NAME=${USER_CLEAN}/folks-back-end" >> "$GITHUB_ENV"
+
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/folks-back-end
+          images: ${{ env.IMAGE_NAME }}
+          flavor: latest=true
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest
 
       - name: Build and push image
         uses: docker/build-push-action@v6
